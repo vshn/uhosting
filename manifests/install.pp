@@ -7,4 +7,6 @@ class uhosting::install inherits uhosting {
   package { $package_name:
     ensure => $package_ensure,
   }
+
+  # install base packages
 }

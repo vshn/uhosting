@@ -1,0 +1,5 @@
+#
+class uhosting::profiles::uwsgi {
+
+
+}
