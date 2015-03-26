@@ -34,13 +34,15 @@ class uhosting (
   # validate_absolute_path, validate_bool, validate_string, validate_hash
   # validate_array, ... (see stdlib docs)
 
-  class { '::uhosting::install': } ->
-  class { '::uhosting::config': } ~>
-  class { '::uhosting::service': } ->
-  Class['::uhosting']
+  #class { '::uhosting::install': } ->
+  #class { '::uhosting::config': } ~>
+  #class { '::uhosting::service': } ->
+  #Class['::uhosting']
 
-  contain ::uhosting::install
-  contain ::uhosting::config
-  contain ::uhosting::service
+  #contain ::uhosting::install
+  #contain ::uhosting::config
+  #contain ::uhosting::service
+
+  # See profiles and roles
 
 }
