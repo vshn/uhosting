@@ -1,0 +1,7 @@
+[uwsgi]
+plugins = php
+chown-socket = www-data:www-data
+uid = <%= @name %>
+gid = <%= @name %>
+socket = /run/uwsgi/<%= @name %>.socket
+

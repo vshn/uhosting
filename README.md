@@ -58,3 +58,33 @@ Since your module is awesome, other users will want to play with it. Let them kn
 ## Release Notes/Contributors/Etc **Optional**
 
 If you aren't using changelog, put your release notes here (though you should consider using changelog). You may also add any additional sections you feel are necessary or important to include here. Please use the `## ` header. 
+
+## Temporary Examples
+
+```
+---
+classes:
+  - uhosting::profiles::nginx
+  - uhosting::profiles::uwsgi
+  - uhosting::profiles::mariadb
+  - uhosting::profiles::postgresql
+  - uhosting::profiles::knot
+
+uhosting::profiles::mariadb::root_password: 'Passw0rd'
+uhosting::sites:
+  tobru_ch:
+    server_names:
+      - 'tobru.ch'
+    stacktype: 'static'
+    database: false
+    ssl_type: 'selfsigned'
+  foti_broesme_li:
+    server_names:
+      - 'broesme.li'
+      - 'foti.broesme.li'
+    stacktype: 'php'
+    database: false
+    ssl_type: 'selfsigned'
+uhosting::dns_zones:
+  - 'tobru.ch'
+```

@@ -6,6 +6,10 @@ class uhosting::roles::standard {
 
   # Web application server
   include uhosting::profiles::uwsgi
+  # include uhosting::language::php
+  # include uhosting::language::python
+  # include uhosting::language::ruby
+  # include uhosting::language::go
 
   # Database server
   include uhosting::profiles::mariadb
@@ -15,5 +19,6 @@ class uhosting::roles::standard {
   include uhosting::profiles::knot
 
   # maybe: redis, solr?
+  #include uhosting::profiles::webhookd
 
 }
