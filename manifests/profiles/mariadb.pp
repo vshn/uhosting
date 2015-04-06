@@ -51,6 +51,17 @@ class uhosting::profiles::mariadb (
     version => 'v1.4.0',
   }
 
+  ### Resources
+  ## Get sites from hiera
+  $sitehash = hiera('uhosting::sites')
+  $sites = keys($sitehash)
+  validate_hash($sitehash)
+
+  ## Create the databases
+  resources::mariadb { $sites:
+    sitehash => $sitehash,
+  }
+
   ## Firewall settings
   #firewall {
   #  '020 open MariaDB IPv4':

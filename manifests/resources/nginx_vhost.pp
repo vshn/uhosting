@@ -35,7 +35,7 @@ define uhosting::resources::nginx_vhost (
     #group  => $name,
   }
 
-  case $sitedata['stacktype'] {
+  case $sitedata['stack_type'] {
     'static': {
       ::nginx::resource::vhost { $name:
         ensure               => $ensure,

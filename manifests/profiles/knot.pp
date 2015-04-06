@@ -1,6 +1,9 @@
 #
 class uhosting::profiles::knot {
 
-  include ::knot
+  class { '::knot':
+    system => { 'version' => 'off' },
+    zones  => hiera('uhosting::dns_zones'),
+  }
 
 }
