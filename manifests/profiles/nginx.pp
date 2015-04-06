@@ -20,7 +20,7 @@ class uhosting::profiles::nginx inherits ::uhosting {
   }
 
   # create vhosts
-  resources::nginx_vhost { $site_names:
+  resources::site { $site_names:
     data => $uhosting::sites,
   }
 

@@ -27,4 +27,20 @@ class uhosting::profiles::uwsgi {
     group  => 'www-data',
   }
 
+  # language stacks
+  class { 'python':
+    version    => 'system',
+    pip        => true,
+    dev        => false,
+    virtualenv => false,
+    gunicorn   => false,
+  } ->
+  python::pip { 'uwsgitop': ensure => present }
+
+  class { 'ruby':
+  } ->
+  package { 'ruby-rack':
+    ensure   => installed,
+  }
+
 }

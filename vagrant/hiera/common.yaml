@@ -8,19 +8,36 @@ classes:
 
 uhosting::profiles::mariadb::root_password: 'Passw0rd'
 uhosting::sites:
-  site1_ch:
+  staticsite_ch:
     server_names:
-      - 'site1.ch'
+      - 'staticsite.ch'
     stack_type: 'static'
     database: false
     ssl_type: 'selfsigned'
-  test_mydomain_ch:
+  phpsite_ch:
     server_names:
-      - 'mydomain.ch'
-      - 'test.mydomain.ch'
+      - 'phpsite.ch'
     stack_type: 'php'
     database: false
     ssl_type: 'selfsigned'
+  pythonsite_ch:
+    server_names:
+      - 'pythonsite.ch'
+    stack_type: 'python'
+    wsgi-file: '/var/www/pythonsite_ch/public_html/foobar.py'
+    database: false
+    ssl_type: 'selfsigned'
+  rubysite_ch:
+    server_names:
+      - 'rubysite.ch'
+    stack_type: 'ruby'
+    rack: '/var/www/rubysite_ch/public_html/ruby.ru'
+    #uwsgi_params:
+    #  rack: 'ruby.ru'
+    database: false
+    ssl_type: 'selfsigned'
 uhosting::dns_zones:
-  site1.ch: {}
-  mydomain.ch: {}
+  staticsite.ch: {}
+  phpsite.ch: {}
+  pythonsite.ch: {}
+  rubysite.ch: {}

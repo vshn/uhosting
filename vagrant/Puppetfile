@@ -11,6 +11,7 @@ mod "richardc/datacat"
 mod "puppetlabs/apt"
 mod "puppetlabs/firewall"
 mod "rodjek/logrotate"
+mod "deric/accounts"
 
 # Language modules
 mod "puppetlabs/ruby"

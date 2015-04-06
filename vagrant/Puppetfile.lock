@@ -2,6 +2,8 @@ FORGE
   remote: http://forge.puppetlabs.com
   specs:
     darin-zypprepo (1.0.2)
+    deric-accounts (1.0.2)
+      puppetlabs-stdlib (>= 0.1.7)
     example42-puppi (2.1.10)
     example42-yum (2.1.17)
       example42-puppi (> 2.0.0)
@@ -51,6 +53,7 @@ GIT
       puppetlabs-stdlib (>= 1.0.0)
 
 DEPENDENCIES
+  deric-accounts (>= 0)
   jfryman-nginx (>= 0)
   mayflower-php (>= 0)
   puppetlabs-apt (>= 0)
