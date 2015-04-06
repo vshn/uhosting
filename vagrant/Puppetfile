@@ -1,0 +1,33 @@
+forge "http://forge.puppetlabs.com"
+
+# Library modules
+mod "puppetlabs/concat"
+mod "puppetlabs/stdlib"
+mod "puppetlabs/inifile"
+mod "puppetlabs/vcsrepo"
+mod "richardc/datacat"
+
+# Basic / System modules
+mod "puppetlabs/apt"
+mod "puppetlabs/firewall"
+mod "rodjek/logrotate"
+
+# Language modules
+mod "puppetlabs/ruby"
+mod "stankevich/python"
+mod "mayflower/php"
+mod "puppetlabs/java"
+
+# Application modules
+mod "jfryman/nginx"
+mod "puppetlabs/mysql"
+mod "puppetlabs/postgresql"
+mod "tobru/knot"
+mod 'webhookd',
+  :git => 'https://github.com/tobru/puppet-webhookd.git'
+
+# Disabled modules
+#mod "pdxcat/collectd"
+#mod "saz/memcached"
+#mod "puppetlabs/git"
+#redis?

@@ -5,3 +5,5 @@ spec/fixtures
 .vagrant
 .bundle
 vendor
+vagrant/modules
+vagrant/.tmp

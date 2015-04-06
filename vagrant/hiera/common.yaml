@@ -1,0 +1,26 @@
+---
+classes:
+  - uhosting::profiles::nginx
+  - uhosting::profiles::uwsgi
+  - uhosting::profiles::mariadb
+  - uhosting::profiles::postgresql
+  - uhosting::profiles::knot
+
+uhosting::profiles::mariadb::root_password: 'Passw0rd'
+uhosting::sites:
+  site1_ch:
+    server_names:
+      - 'site1.ch'
+    stack_type: 'static'
+    database: false
+    ssl_type: 'selfsigned'
+  test_mydomain_ch:
+    server_names:
+      - 'mydomain.ch'
+      - 'test.mydomain.ch'
+    stack_type: 'php'
+    database: false
+    ssl_type: 'selfsigned'
+uhosting::dns_zones:
+  site1.ch: {}
+  mydomain.ch: {}
