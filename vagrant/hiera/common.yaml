@@ -18,7 +18,8 @@ uhosting::sites:
     server_names:
       - 'phpsite.ch'
     stack_type: 'php'
-    database: false
+    database: true
+    db_password: 'DB_Passw0rd'
     ssl_type: 'selfsigned'
   pythonsite_ch:
     server_names:
