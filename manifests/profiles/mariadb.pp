@@ -22,7 +22,7 @@ class uhosting::profiles::mariadb (
     location    => 'http://mariadb.kisiek.net/repo/10.0/ubuntu',
     release     => $::lsbdistcodename,
     repos       => 'main',
-    key         => '0xcbcb082a1bb943db',
+    key         => '199369E5404BD5FC7D2FE43BCBCB082A1BB943DB',
     key_server  => 'hkp://keyserver.ubuntu.com:80',
     include_src => false,
     include_deb => true,
