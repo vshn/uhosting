@@ -1,0 +1,1 @@
+FACTER_vagrant='true' puppet apply --verbose --modulepath /etc/puppet/modules:/vagrant/vagrant/modules --hiera_config=/vagrant/vagrant/hiera.yaml --manifestdir /vagrant/vagrant /vagrant/vagrant/default.pp
