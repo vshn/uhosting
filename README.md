@@ -88,3 +88,30 @@ uhosting::sites:
 uhosting::dns_zones:
   - 'tobru.ch'
 ```
+
+# Testfiles
+
+/var/www/rubysite_ch/public_html/ruby.ru
+```
+class App
+
+  def call(environ)
+    [200, {'Content-Type' => 'text/html'}, ['Hello']]
+  end
+
+end
+
+run App.new
+```
+
+/var/www/pythonsite_ch/public_html/foobar.py
+```
+def application(env, start_response):
+    start_response('200 OK', [('Content-Type','text/html')])
+    return [b"Hello World"]
+```
+
+/var/www/phpsite_ch/public_html/index.php
+```
+<?php phpinfo();
+```
