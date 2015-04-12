@@ -25,6 +25,7 @@ class uhosting::profiles::uwsgi {
     ensure => directory,
     owner  => 'www-data',
     group  => 'www-data',
+    mode   => '0775',
   }
 
   # language stacks
