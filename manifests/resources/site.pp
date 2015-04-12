@@ -51,6 +51,7 @@ define uhosting::resources::site (
     comment => "Site account for ${name}",
     shell   => "/usr/sbin/nologin",
     home    => $homedir,
+    groups  => [ 'www-data' ],
   } ->
   # create webroot
   file { $webroot:
