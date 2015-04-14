@@ -8,37 +8,14 @@ classes:
 
 uhosting::profiles::mariadb::root_password: 'Passw0rd'
 uhosting::sites:
-  staticsite_ch:
+  status_tobrunet_ch:
     server_names:
-      - 'staticsite.ch'
-    stack_type: 'static'
-    database: false
-    ssl_type: 'selfsigned'
-  phpsite_ch:
-    server_names:
-      - 'phpsite.ch'
+      - 'status.tobrunet.ch'
     stack_type: 'php'
     database: true
-    db_password: 'DB_Passw0rd'
     ssl_type: 'selfsigned'
-  pythonsite_ch:
-    server_names:
-      - 'pythonsite.ch'
-    stack_type: 'python'
-    wsgi-file: '/var/www/pythonsite_ch/public_html/foobar.py'
-    database: false
-    ssl_type: 'selfsigned'
-  rubysite_ch:
-    server_names:
-      - 'rubysite.ch'
-    stack_type: 'ruby'
-    rack: '/var/www/rubysite_ch/public_html/ruby.ru'
-    #uwsgi_params:
-    #  rack: 'ruby.ru'
-    database: false
-    ssl_type: 'selfsigned'
+
 uhosting::dns_zones:
-  staticsite.ch: {}
-  phpsite.ch: {}
-  pythonsite.ch: {}
-  rubysite.ch: {}
+  tobru.ch: {}
+  tobrunet.ch: {}
+  broesme.li: {}
