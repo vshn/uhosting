@@ -33,7 +33,9 @@ define uhosting::resources::site (
   }
 
   if $sitedata['uid'] {
-    validate_re($sitedata['uid'],'^[0-9]{4}$')
+    if ! is_integer($sitedata['uid']) {
+      fail('uid is not an integer')
+    }
     $uid = $sitedata['uid']
   } else {
     $uid = undef
@@ -45,11 +47,11 @@ define uhosting::resources::site (
   }
 
   ## Site user account
-  accounts::user { $name:
+  identity::user { $name:
     ensure  => $ensure,
     uid     => $uid,
     comment => "Site account for ${name}",
-    shell   => "/usr/sbin/nologin",
+    shell   => '/usr/sbin/nologin',
     home    => $homedir,
     groups  => [ 'www-data' ],
   } ->

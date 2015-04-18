@@ -11,7 +11,8 @@ mod "richardc/datacat"
 mod "puppetlabs/apt"
 mod "puppetlabs/firewall"
 mod "rodjek/logrotate"
-mod "deric/accounts"
+mod 'identity',
+  :git => 'git@git.vshn.net:vshn-puppet/identity.git'
 
 # Language modules
 mod "puppetlabs/ruby"

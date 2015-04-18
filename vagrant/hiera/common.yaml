@@ -9,12 +9,14 @@ classes:
 uhosting::profiles::mariadb::root_password: 'Passw0rd'
 uhosting::sites:
   staticsite_ch:
+    uid: 2001
     server_names:
       - 'staticsite.ch'
     stack_type: 'static'
     database: false
     ssl_type: 'selfsigned'
   phpsite_ch:
+    uid: 2002
     server_names:
       - 'phpsite.ch'
     stack_type: 'php'
@@ -22,6 +24,7 @@ uhosting::sites:
     db_password: 'DB_Passw0rd'
     ssl_type: 'selfsigned'
   pythonsite_ch:
+    uid: 2003
     server_names:
       - 'pythonsite.ch'
     stack_type: 'python'
@@ -29,6 +32,7 @@ uhosting::sites:
     database: false
     ssl_type: 'selfsigned'
   rubysite_ch:
+    uid: 2004
     server_names:
       - 'rubysite.ch'
     stack_type: 'ruby'
@@ -37,6 +41,7 @@ uhosting::sites:
     #  rack: 'ruby.ru'
     database: false
     ssl_type: 'selfsigned'
+
 uhosting::dns_zones:
   staticsite.ch: {}
   phpsite.ch: {}
