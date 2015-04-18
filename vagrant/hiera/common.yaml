@@ -13,6 +13,8 @@ uhosting::sites:
       - 'status.tobrunet.ch'
     stack_type: 'php'
     database: true
+    db_password: 'Passw0rddd'
+    db_name: 'status_tnet'
     ssl_type: 'selfsigned'
 
 uhosting::dns_zones:
