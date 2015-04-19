@@ -25,6 +25,12 @@ define uhosting::resources::mariadb (
       $db_user = $name
       validate_re($db_user,'^[a-zA-Z0-9_-]{1,16}$',"THE DB NAME '${db_user}' DOES NOT MATCH THE RULES (SEE DOCS)")
     }
+    if $sitedata['db_name'] {
+      validate_string($sitedata['db_name'])
+      $db_name = $sitedata['db_name']
+    } else {
+      $db_name = $name
+    }
     if $sitedata['ensure'] {
       validate_re($sitedata['ensure'], '^present|absent$')
       $ensure = $sitedata['ensure']
@@ -34,7 +40,6 @@ define uhosting::resources::mariadb (
     $host    = '%'
     $grant   = ['ALL']
     $table   = "${name}.*"
-    $db_name = $name
 
     # Create DB
     mysql_database { $db_name:

@@ -2,6 +2,7 @@
 :backends:
   - yaml
 :hierarchy:
-  - common
+  - "%{::hostname}"
+  - hieradata
 :yaml:
-  :datadir: "/vagrant/vagrant/hiera"
+  :datadir: "/vagrant/vagrant"

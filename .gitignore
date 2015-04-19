@@ -7,3 +7,4 @@ spec/fixtures
 vendor
 vagrant/modules
 vagrant/.tmp
+vagrant/Puppetfile.lock
