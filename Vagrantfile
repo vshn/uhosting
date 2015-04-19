@@ -53,7 +53,7 @@ SCRIPT
 
   ## Read hiera YAML and put all server_names into landrush
   config.landrush.enabled = true
-  hieradata = YAML.load_file('vagrant/hiera/common.yaml')
+  hieradata = YAML.load_file('vagrant/hieradata.yaml')
   hieradata['uhosting::sites'].each do |sitename,sitedata|
     sitedata['server_names'].each do |server_name|
       config.landrush.host server_name, '172.28.128.4'
