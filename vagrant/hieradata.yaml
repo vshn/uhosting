@@ -15,6 +15,7 @@ uhosting::sites:
     database: true
     db_password: 'Passw0rddd'
     db_name: 'status_tnet'
+    db_user: 'status_tnet'
     ssl_type: 'selfsigned'
 
 uhosting::dns_zones:
