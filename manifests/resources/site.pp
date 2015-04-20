@@ -46,6 +46,11 @@ define uhosting::resources::site (
     $uwsgi_params = $sitedata['uwsgi_params']
   }
 
+  if $sitedata['system_packages'] {
+    validate_array($sitedata['system_packages'])
+    ensure_packages($sitedata['system_packages'])
+  }
+
   ## Site user account
   identity::user { $name:
     ensure  => $ensure,
@@ -74,6 +79,7 @@ define uhosting::resources::site (
     }
     'php': {
       $plugins = 'php'
+      # TODO add some php5enmod logic
       if $uwsgi_params {
         $vassal_params = $uwsgi_params
       }
