@@ -46,6 +46,11 @@ define uhosting::resources::site (
     $uwsgi_params = $sitedata['uwsgi_params']
   }
 
+  if $sitedata['system_packages'] {
+    validate_array($sitedata['system_packages'])
+    ensure_packages($sitedata['system_packages'])
+  }
+
   ## Site user account
   identity::user { $name:
     ensure  => $ensure,
@@ -73,14 +78,18 @@ define uhosting::resources::site (
       }
     }
     'php': {
+      ## uwsgi
       $plugins = 'php'
+      # TODO add some php5enmod logic
       if $uwsgi_params {
         $vassal_params = $uwsgi_params
       }
       file { "${vassals_dir}/${name}.ini":
         content => template('uhosting/uwsgi_vassal.ini.erb')
-      } ->
-      ::nginx::resource::vhost { $name:
+      }
+
+      ## nginx vhost
+      $vhost_defaults = {
         ensure               => $ensure,
         www_root             => $webroot,
         server_name          => $server_names,
@@ -91,8 +100,11 @@ define uhosting::resources::site (
           'try_files $uri /index.php =404;',
           'uwsgi_modifier1 14;',
           "uwsgi_pass unix:/run/uwsgi/${name}.socket;",
-        ]
+         ],
       }
+      $vhost_params = merge($vhost_defaults,$sitedata['vhost_params'])
+      $vhost_resource = { "${name}" => $vhost_params }
+      create_resources('::nginx::resource::vhost',$vhost_resource)
     }
     'python': {
       $plugins = 'python'

@@ -39,7 +39,7 @@ define uhosting::resources::mariadb (
     }
     $host    = '%'
     $grant   = ['ALL']
-    $table   = "${name}.*"
+    $table   = "${db_name}.*"
 
     # Create DB
     mysql_database { $db_name:

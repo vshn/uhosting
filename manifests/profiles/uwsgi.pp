@@ -41,7 +41,11 @@ class uhosting::profiles::uwsgi {
   class { 'ruby':
   } ->
   package { 'ruby-rack':
-    ensure   => installed,
+    ensure => installed,
+  }
+
+  package { 'php5-cli':
+    ensure => installed,
   }
 
 }
