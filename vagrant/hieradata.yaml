@@ -17,6 +17,20 @@ uhosting::sites:
     db_name: 'status_tnet'
     db_user: 'status_tnet'
     ssl_type: 'selfsigned'
+    vhost_params:
+      use_default_location: false
+      www_root: '/var/www/status_tobrunet_ch/public_html/Cachet/public'
+    vhost_locations:
+      '/':
+        location_custom_cfg:
+          try_files:
+            - 'try_files $uri /index.php$is_args$args'
+      '~ \.php$':
+        include:
+          - 'uwsgi_params'
+        location_custom_cfg:
+          uwsgi_modifier1: 14
+          uwsgi_pass: 'unix:/run/uwsgi/status_tobrunet_ch.socket'
 
 uhosting::dns_zones:
   tobru.ch: {}
