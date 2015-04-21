@@ -78,6 +78,7 @@ define uhosting::resources::site (
       }
     }
     'php': {
+      ## uwsgi
       $plugins = 'php'
       # TODO add some php5enmod logic
       if $uwsgi_params {
@@ -85,8 +86,10 @@ define uhosting::resources::site (
       }
       file { "${vassals_dir}/${name}.ini":
         content => template('uhosting/uwsgi_vassal.ini.erb')
-      } ->
-      ::nginx::resource::vhost { $name:
+      }
+
+      ## nginx vhost
+      $vhost_defaults = {
         ensure               => $ensure,
         www_root             => $webroot,
         server_name          => $server_names,
@@ -97,8 +100,11 @@ define uhosting::resources::site (
           'try_files $uri /index.php =404;',
           'uwsgi_modifier1 14;',
           "uwsgi_pass unix:/run/uwsgi/${name}.socket;",
-        ]
+         ],
       }
+      $vhost_params = merge($vhost_defaults,$sitedata['vhost_params'])
+      $vhost_resource = { "${name}" => $vhost_params }
+      create_resources('::nginx::resource::vhost',$vhost_resource)
     }
     'python': {
       $plugins = 'python'
