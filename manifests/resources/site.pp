@@ -67,6 +67,10 @@ define uhosting::resources::site (
     group  => $name,
   }
 
+  # do we need this stack_type?
+  # maybe we could add $uwsgi_plugin to the sitedata hash
+  # or use stack_type static vs dynamic to chose if there should be
+  # a vassal
   case $sitedata['stack_type'] {
     'static': {
       ::nginx::resource::vhost { $name:
@@ -102,9 +106,15 @@ define uhosting::resources::site (
           "uwsgi_pass unix:/run/uwsgi/${name}.socket;",
          ],
       }
+      # $sitedata['vhost_params'] can be empty, so we merge it here
+      # and don't use it as default value for create_resources
       $vhost_params = merge($vhost_defaults,$sitedata['vhost_params'])
       $vhost_resource = { "${name}" => $vhost_params }
       create_resources('::nginx::resource::vhost',$vhost_resource)
+      $location_defaults = {
+        vhost => $name
+      }
+      create_resources('::nginx::resource::location',$sitedata['vhost_locations'],$location_defaults)
     }
     'python': {
       $plugins = 'python'
