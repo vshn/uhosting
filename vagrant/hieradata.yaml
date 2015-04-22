@@ -34,6 +34,40 @@ uhosting::sites:
           uwsgi_pass: 'unix:/run/uwsgi/status_tobrunet_ch.socket'
 
 uhosting::dns_zones:
-  tobru.ch: {}
-  tobrunet.ch: {}
+  0.8.c.f.5.0.a.2.ip6.arpa: {}
+  0.f.0.0.8.8.0.0.c.7.6.0.1.0.0.2.ip6.arpa: {}
+  0xt.xyz: {}
+  192-27.218.199.91.in-addr.arpa: {}
+  216.95.185.in-addr.arpa: {}
+  217.95.185.in-addr.arpa: {}
+  218.95.185.in-addr.arpa: {}
+  219.95.185.in-addr.arpa: {}
+  224-28.218.199.91.in-addr.arpa: {}
+  4.8.c.f.5.0.a.2.ip6.arpa: {}
+  8.2.c.2.c.7.6.0.1.0.0.2.ip6.arpa: {}
+  big-hug.ch: {}
   broesme.li: {}
+  c-m.io: {}
+  chruezfahrt.ch: {}
+  churz.ch: {}
+  cloud-mountain.ch: {}
+  cloudmountain.ch: {}
+  communityrack.org: {}
+  glattaltravel.ch: {}
+  meine-kreuzfahrt.ch: {}
+  meinekreuzfahrt.ch: {}
+  stueck.li: {}
+  stueckli.ch: {}
+  t0b.ch: {}
+  t3u.me: {}
+  tbr.pw: {}
+  tischbombeschnauz.ch: {}
+  tobru.ch: {}
+  tobru.guru: {}
+  tobrunet.ch: {}
+  tobrunet.in: {}
+  tobrunet.xyz: {}
+  xn--chrzfahrt-s9a.ch: {}
+  xn--stck-1ra.li: {}
+  xn--stckli-4ya.ch: {}
+
