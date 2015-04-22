@@ -11,12 +11,13 @@ uhosting::sites:
   status_tobrunet_ch:
     server_names:
       - 'status.tobrunet.ch'
-    stack_type: 'php'
+    stack_type: 'uwsgi'
+    uwsgi_plugin: 'php'
+    ssl_type: 'selfsigned'
     database: true
     db_password: 'Passw0rddd'
     db_name: 'status_tnet'
     db_user: 'status_tnet'
-    ssl_type: 'selfsigned'
     vhost_params:
       use_default_location: false
       www_root: '/var/www/status_tobrunet_ch/public_html/Cachet/public'
