@@ -7,7 +7,7 @@ class uhosting::profiles::uwsgi {
     location    => 'http://ppa.launchpad.net/osso/uwsgi/ubuntu',
     release     => $::lsbdistcodename,
     repos       => 'main',
-    key         => '0xBD6901E2',
+    key         => 'A8E0D05D50EC0EDA4958B44535CF57C9BD6901E2',
     key_server  => 'hkp://keyserver.ubuntu.com:80',
     include_src => false,
     include_deb => true,
