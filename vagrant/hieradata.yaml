@@ -33,6 +33,15 @@ uhosting::sites:
           uwsgi_modifier1: 14
           uwsgi_pass: 'unix:/run/uwsgi/status_tobrunet_ch.socket'
 
+uhosting::dns_zone_keys:
+  key0:
+    algorithm: 'hmac-md5'
+    key: 'Mff/lpK+TrSp3ENtfO+RqQ=='
+uhosting::dns_zone_remotes:
+  ns1_tobrunet:
+    address: '91.199.218.198'
+    port: '53'
+    key: 'key0'
 uhosting::dns_zone_defaults:
   xfr-in: 'ns1_tobrunet'
   notify-in: 'ns1_tobrunet'
