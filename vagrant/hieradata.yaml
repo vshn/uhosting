@@ -33,6 +33,9 @@ uhosting::sites:
           uwsgi_modifier1: 14
           uwsgi_pass: 'unix:/run/uwsgi/status_tobrunet_ch.socket'
 
+uhosting::dns_zone_defaults:
+  xfr-in: 'ns1_tobrunet'
+  notify-in: 'ns1_tobrunet'
 uhosting::dns_zones:
   0.8.c.f.5.0.a.2.ip6.arpa: {}
   0.f.0.0.8.8.0.0.c.7.6.0.1.0.0.2.ip6.arpa: {}
