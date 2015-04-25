@@ -59,6 +59,7 @@ define uhosting::resources::site (
     shell   => '/usr/sbin/nologin',
     home    => $homedir,
     groups  => [ 'www-data' ],
+    require => File['/var/www'],
   } ->
   # create webroot
   file { $webroot:
@@ -67,12 +68,9 @@ define uhosting::resources::site (
     group  => $name,
   }
 
-  # do we need this stack_type?
-  # maybe we could add $uwsgi_plugin to the sitedata hash
-  # or use stack_type static vs dynamic to chose if there should be
-  # a vassal
   case $sitedata['stack_type'] {
     'static': {
+      include uhosting::profiles::nginx
       $vhost_defaults = {
         ensure               => $ensure,
         www_root             => $webroot,
@@ -82,6 +80,8 @@ define uhosting::resources::site (
       }
     }
     'uwsgi': {
+      include uhosting::profiles::nginx
+      include uhosting::profiles::uwsgi
       case $sitedata['uwsgi_plugin'] {
         'php': {
           include uhosting::profiles::uwsgi::php
@@ -91,7 +91,8 @@ define uhosting::resources::site (
             $vassal_params = $uwsgi_params
           }
           file { "${vassals_dir}/${name}.ini":
-            content => template('uhosting/uwsgi_vassal.ini.erb')
+            content => template('uhosting/uwsgi_vassal.ini.erb'),
+            require => Class['uhosting::profiles::uwsgi::php'],
           }
           $vhost_defaults = {
             ensure               => $ensure,
@@ -124,7 +125,8 @@ define uhosting::resources::site (
             $vassal_params = $vassal_params_default
           }
           file { "${vassals_dir}/${name}.ini":
-            content => template('uhosting/uwsgi_vassal.ini.erb')
+            content => template('uhosting/uwsgi_vassal.ini.erb'),
+            require => Class['uhosting::profiles::uwsgi::php'],
           }
           $vhost_defaults = {
             ensure               => $ensure,
@@ -156,7 +158,8 @@ define uhosting::resources::site (
             $vassal_params = $vassal_params_default
           }
           file { "${vassals_dir}/${name}.ini":
-            content => template('uhosting/uwsgi_vassal.ini.erb')
+            content => template('uhosting/uwsgi_vassal.ini.erb'),
+            require => Class['uhosting::profiles::uwsgi::php'],
           }
           $vhost_defaults = {
             ensure               => $ensure,
@@ -190,6 +193,15 @@ define uhosting::resources::site (
       vhost => $name
     }
     create_resources('::nginx::resource::location',$sitedata['vhost_locations'],$location_defaults)
+  }
+
+  case $sitedata['database'] {
+    'mariadb': {
+      include uhosting::profiles::mariadb
+    }
+    'postgresql': {
+      include uhosting::profiles::postgresql
+    }
   }
 
 }

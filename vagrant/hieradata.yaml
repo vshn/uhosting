@@ -1,10 +1,6 @@
 ---
 classes:
-  - uhosting::profiles::nginx
-  - uhosting::profiles::uwsgi
-  - uhosting::profiles::mariadb
-  - uhosting::profiles::postgresql
-  - uhosting::profiles::knot
+  - uhosting
 
 uhosting::profiles::mariadb::root_password: 'Passw0rd'
 uhosting::sites:
@@ -21,7 +17,7 @@ uhosting::sites:
       - 'phpsite.ch'
     stack_type: 'uwsgi'
     uwsgi_plugin: 'php'
-    database: true
+    database: 'mariadb'
     db_password: 'DB_Passw0rd'
     ssl_type: 'selfsigned'
   pythonsite_ch:
@@ -31,7 +27,6 @@ uhosting::sites:
     stack_type: 'uwsgi'
     uwsgi_plugin: 'python'
     wsgi-file: '/var/www/pythonsite_ch/public_html/foobar.py'
-    database: false
     ssl_type: 'selfsigned'
   rubysite_ch:
     uid: 2004
@@ -42,7 +37,6 @@ uhosting::sites:
     rack: '/var/www/rubysite_ch/public_html/ruby.ru'
     #uwsgi_params:
     #  rack: 'ruby.ru'
-    database: false
     ssl_type: 'selfsigned'
 
 uhosting::dns_zones:

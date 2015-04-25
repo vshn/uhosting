@@ -1,9 +1,9 @@
 #
 define uhosting::resources::mariadb (
-  $sitehash,
+  $data,
 ) {
 
-  $sitedata = $sitehash[$name]
+  $sitedata = $data[$name]
 
   if $sitedata['database'] {
     # validate sitename:

@@ -24,8 +24,19 @@
 class uhosting (
   $sites,
   $dns_zones = undef,
-) inherits ::uhosting::params {
+) {
 
   validate_hash($sites)
+
+  if $dns_zones {
+    validate_hash($dns_zones)
+    include uhosting::profiles::knot
+  }
+
+  # create site resources
+  $site_names = keys($sites)
+  resources::site { $site_names:
+    data => $sites,
+  }
 
 }
