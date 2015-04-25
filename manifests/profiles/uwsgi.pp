@@ -15,8 +15,7 @@ class uhosting::profiles::uwsgi {
   package { [
     'uwsgi-core',
     'uwsgi-emperor',
-    'uwsgi-infrastructure-plugins',
-    'uwsgi-app-integration-plugins' ]:
+    'uwsgi-infrastructure-plugins' ]:
       ensure => installed,
   } ->
   file { '/etc/uwsgi-emperor/emperor.ini':
@@ -36,26 +35,6 @@ class uhosting::profiles::uwsgi {
     owner  => 'www-data',
     group  => 'www-data',
     mode   => '0775',
-  }
-
-  # language stacks
-  class { 'python':
-    version    => 'system',
-    pip        => true,
-    dev        => false,
-    virtualenv => false,
-    gunicorn   => false,
-  } ->
-  python::pip { 'uwsgitop': ensure => present }
-
-  class { 'ruby':
-  } ->
-  package { 'ruby-rack':
-    ensure => installed,
-  }
-
-  package { 'php5-cli':
-    ensure => installed,
   }
 
 }

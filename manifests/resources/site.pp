@@ -84,6 +84,7 @@ define uhosting::resources::site (
     'uwsgi': {
       case $sitedata['uwsgi_plugin'] {
         'php': {
+          include uhosting::profiles::uwsgi::php
           $plugins = 'php'
           # TODO add some php5enmod logic
           if $uwsgi_params {
@@ -107,6 +108,7 @@ define uhosting::resources::site (
           }
         }
         'ruby': {
+          include uhosting::profiles::uwsgi::ruby
           $plugins = 'rack'
           if ! $sitedata['rack'] {
             fail("MUST DEFINE 'rack' on ${name}")
@@ -138,6 +140,7 @@ define uhosting::resources::site (
           }
         }
         'python': {
+          include uhosting::profiles::uwsgi::python
           $plugins = 'python'
           if ! $sitedata['wsgi-file'] {
             fail("MUST DEFINE 'wsgi-file' on ${name}")
