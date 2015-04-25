@@ -1,9 +1,6 @@
 #
 class uhosting::profiles::nginx inherits ::uhosting {
 
-  # get all sites coming from the main class
-  $site_names = keys($uhosting::sites)
-
   # Create and manage directories
   file {
     '/var/www':
@@ -18,12 +15,5 @@ class uhosting::profiles::nginx inherits ::uhosting {
   class { '::nginx':
     package_name => 'nginx-extras',
   }
-
-  # create vhosts
-  resources::site { $site_names:
-    data => $uhosting::sites,
-  }
-
-  # TODO: create users and groups. maybe virtual
 
 }

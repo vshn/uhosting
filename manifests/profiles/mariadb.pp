@@ -55,11 +55,10 @@ class uhosting::profiles::mariadb (
   ## Get sites from hiera
   $sitehash = hiera('uhosting::sites')
   $sites = keys($sitehash)
-  validate_hash($sitehash)
 
   ## Create the databases
   resources::mariadb { $sites:
-    sitehash => $sitehash,
+    data => $sitehash,
   }
 
   ## Firewall settings
