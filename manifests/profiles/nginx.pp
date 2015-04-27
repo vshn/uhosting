@@ -13,7 +13,8 @@ class uhosting::profiles::nginx inherits ::uhosting {
   }
 
   class { '::nginx':
-    package_name => 'nginx-extras',
+    package_name      => 'nginx-extras',
+    configtest_enable => true,
   }
 
   firewall {
