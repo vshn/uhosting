@@ -25,6 +25,7 @@ define uhosting::resources::site (
     fail("'server_names' FOR ${name} IS NOT CONFIGURED")
   }
 
+  # ensure handling
   if $sitedata['ensure'] {
     validate_re($sitedata['ensure'], '^present|absent$')
     $ensure = $sitedata['ensure']
@@ -32,6 +33,7 @@ define uhosting::resources::site (
     $ensure = 'present'
   }
 
+  # uid checking
   if $sitedata['uid'] {
     if ! is_integer($sitedata['uid']) {
       fail('uid is not an integer')
@@ -41,14 +43,46 @@ define uhosting::resources::site (
     $uid = undef
   }
 
+  # uwsgi parameters
   if $sitedata['uwsgi_params'] {
     validate_hash($sitedata['uwsgi_params'])
     $uwsgi_params = $sitedata['uwsgi_params']
   }
 
+  # system packages
+  # TODO: really needed?
   if $sitedata['system_packages'] {
     validate_array($sitedata['system_packages'])
     ensure_packages($sitedata['system_packages'])
+  }
+
+  # ssl certificate handling
+  if $sitedata['ssl_cert'] {
+    validate_absolute_path($sitedata['ssl_cert'])
+    $ssl_cert = $sitedata['ssl_cert']
+    if $sitedata['ssl_key'] {
+      validate_absolute_path($sitedata['ssl_key'])
+      $ssl_key = $sitedata['ssl_key']
+    } else {
+      fail('A CERTIFICATE WITHOUT A KEY MAKES NO SENSE')
+    }
+    $ssl = true
+  } else {
+    $ssl_cert = undef
+    $ssl_key = undef
+    $ssl = false
+  }
+
+  # vhost default parameters
+  $vhost_global_defaults = {
+    ensure               => $ensure,
+    www_root             => $webroot,
+    server_name          => $server_names,
+    index_files          => ['index.html'],
+    use_default_location => true,
+    ssl                  => $ssl,
+    ssl_cert             => $ssl_cert,
+    ssl_key              => $ssl_key,
   }
 
   ## Site user account
@@ -71,13 +105,6 @@ define uhosting::resources::site (
   case $sitedata['stack_type'] {
     'static': {
       include uhosting::profiles::nginx
-      $vhost_defaults = {
-        ensure               => $ensure,
-        www_root             => $webroot,
-        server_name          => $server_names,
-        index_files          => ['index.html'],
-        use_default_location => true,
-      }
     }
     'uwsgi': {
       include uhosting::profiles::nginx
@@ -95,11 +122,7 @@ define uhosting::resources::site (
             require => Class['uhosting::profiles::uwsgi::php'],
           }
           $vhost_defaults = {
-            ensure               => $ensure,
-            www_root             => $webroot,
-            server_name          => $server_names,
             index_files          => ['index.php'],
-            use_default_location => true,
             location_raw_append  => [
               'include uwsgi_params;',
               'try_files $uri /index.php =404;',
@@ -129,11 +152,6 @@ define uhosting::resources::site (
             require => Class['uhosting::profiles::uwsgi::php'],
           }
           $vhost_defaults = {
-            ensure               => $ensure,
-            www_root             => $webroot,
-            server_name          => $server_names,
-            index_files          => ['index.html'],
-            use_default_location => true,
             location_raw_append  => [
               'include uwsgi_params;',
               'uwsgi_modifier1 7;',
@@ -162,11 +180,6 @@ define uhosting::resources::site (
             require => Class['uhosting::profiles::uwsgi::php'],
           }
           $vhost_defaults = {
-            ensure               => $ensure,
-            www_root             => $webroot,
-            server_name          => $server_names,
-            index_files          => ['index.html'],
-            use_default_location => true,
             location_raw_append  => [
               'include uwsgi_params;',
               "uwsgi_pass unix:/run/uwsgi/${name}.socket;",
@@ -185,7 +198,8 @@ define uhosting::resources::site (
 
   # $sitedata['vhost_params'] can be empty, so we merge it here
   # and don't use it as default value for create_resources
-  $vhost_params = merge($vhost_defaults,$sitedata['vhost_params'])
+  $vhost_defaults1 = merge($vhost_global_defaults,$vhost_defaults)
+  $vhost_params = merge($vhost_defaults1,$sitedata['vhost_params'])
   $vhost_resource = { "${name}" => $vhost_params }
   create_resources('::nginx::resource::vhost',$vhost_resource)
   if $sitedata['vhost_locations'] {
