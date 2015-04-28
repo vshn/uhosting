@@ -69,12 +69,14 @@ define uhosting::resources::site (
     $ssl = true
     $rewrite_to_https = true
     $hsts = { 'Strict-Transport-Security' => '"max-age=63072000; includeSubdomains; preload"' }
+    $ssl_dhparam = '/etc/ssl/certs/dhparam.pem'
   } else {
     $ssl_cert = undef
     $ssl_key = undef
     $ssl = false
     $rewrite_to_https = false
     $hsts = undef
+    $ssl_dhparam = undef
   }
 
   # vhost default parameters
@@ -87,6 +89,7 @@ define uhosting::resources::site (
     ssl                  => $ssl,
     ssl_cert             => $ssl_cert,
     ssl_key              => $ssl_key,
+    ssl_dhparam          => $ssl_dhparam,
     rewrite_to_https     => true,
     ssl_protocols        => 'TLSv1 TLSv1.1 TLSv1.2',
     ssl_ciphers          => 'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:AES:CAMELLIA:DES-CBC3-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA',
