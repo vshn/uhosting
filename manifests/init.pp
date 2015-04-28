@@ -23,6 +23,7 @@
 #
 class uhosting (
   $sites,
+  $redirects = undef,
   $dns_zones = undef,
 ) {
 

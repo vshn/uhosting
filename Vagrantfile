@@ -5,13 +5,13 @@ require 'yaml'
 Vagrant.configure(2) do |config|
   config.vm.box = "puppetlabs/ubuntu-14.04-64-puppet"
 
-  config.vm.define "kawakawa" do |default|
+  config.vm.define "default" do |default|
 
     ## General VM settings
-    default.vm.hostname = "kawakawa.vagrant.dev"
+    default.vm.hostname = "uhosting.vagrant.dev"
 
     ## Network settings
-    default.vm.network "private_network", ip: '172.28.128.6'
+    default.vm.network "private_network", ip: '172.28.128.4'
 
     ## Synced folders
     default.vm.synced_folder ".", "/etc/puppet/modules/uhosting"
@@ -56,8 +56,8 @@ SCRIPT
   hieradata = YAML.load_file('vagrant/hieradata.yaml')
   hieradata['uhosting::sites'].each do |sitename,sitedata|
     sitedata['server_names'].each do |server_name|
-      config.landrush.host server_name, '172.28.128.6'
-      config.landrush.host "#{server_name}.vagrant.dev", '172.28.128.6'
+      config.landrush.host server_name, '172.28.128.4'
+      config.landrush.host "#{server_name}.vagrant.dev", '172.28.128.4'
     end
   end
 

@@ -1,0 +1,6 @@
+<% @redirects.each do |destination,sources| %>
+server {
+  server_name <%= sources.join(' ') %>;
+  return 301 http://<%= destination %>;
+}
+<% end %>

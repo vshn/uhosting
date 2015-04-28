@@ -44,3 +44,10 @@ uhosting::dns_zones:
   phpsite.ch: {}
   pythonsite.ch: {}
   rubysite.ch: {}
+
+uhosting::redirects:
+  rubysite.ch:
+    - rubysite.com
+    - rubysite.org
+    - rubysite.net
+
