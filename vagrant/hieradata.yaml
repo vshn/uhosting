@@ -4,79 +4,43 @@ classes:
 
 uhosting::profiles::mariadb::root_password: 'Passw0rd'
 uhosting::sites:
-  status_tobrunet_ch:
+  staticsite_ch:
+    uid: 2001
     server_names:
-      - 'status.tobrunet.ch'
+      - 'staticsite.ch'
+    stack_type: 'static'
+    database: false
+    ssl_type: 'selfsigned'
+  phpsite_ch:
+    uid: 2002
+    server_names:
+      - 'phpsite.ch'
     stack_type: 'uwsgi'
     uwsgi_plugin: 'php'
-    ssl_cert: '/vagrant/_communityrack.org.pem'
-    ssl_key: '/vagrant/communityrack.org.key'
     database: 'mariadb'
-    db_password: 'Passw0rddd'
-    db_name: 'status_tnet'
-    db_user: 'status_tnet'
-    vhost_params:
-      use_default_location: false
-      www_root: '/var/www/status_tobrunet_ch/public_html/Cachet/public'
-    vhost_locations:
-      '/':
-        location_custom_cfg:
-          try_files:
-            - 'try_files $uri /index.php$is_args$args'
-      '~ \.php$':
-        include:
-          - 'uwsgi_params'
-        location_custom_cfg:
-          uwsgi_modifier1: 14
-          uwsgi_pass: 'unix:/run/uwsgi/status_tobrunet_ch.socket'
+    db_password: 'DB_Passw0rd'
+    ssl_type: 'selfsigned'
+  pythonsite_ch:
+    uid: 2003
+    server_names:
+      - 'pythonsite.ch'
+    stack_type: 'uwsgi'
+    uwsgi_plugin: 'python'
+    wsgi-file: '/var/www/pythonsite_ch/public_html/foobar.py'
+    ssl_type: 'selfsigned'
+  rubysite_ch:
+    uid: 2004
+    server_names:
+      - 'rubysite.ch'
+    stack_type: 'uwsgi'
+    uwsgi_plugin: 'ruby'
+    rack: '/var/www/rubysite_ch/public_html/ruby.ru'
+    #uwsgi_params:
+    #  rack: 'ruby.ru'
+    ssl_type: 'selfsigned'
 
-uhosting::dns_zone_keys:
-  key0:
-    algorithm: 'hmac-md5'
-    key: 'Mff/lpK+TrSp3ENtfO+RqQ=='
-uhosting::dns_zone_remotes:
-  ns1_tobrunet:
-    address: '91.199.218.198'
-    port: '53'
-    key: 'key0'
-uhosting::dns_zone_defaults:
-  xfr-in: 'ns1_tobrunet'
-  notify-in: 'ns1_tobrunet'
 uhosting::dns_zones:
-  0.8.c.f.5.0.a.2.ip6.arpa: {}
-  0.f.0.0.8.8.0.0.c.7.6.0.1.0.0.2.ip6.arpa: {}
-  0xt.xyz: {}
-  192-27.218.199.91.in-addr.arpa: {}
-  216.95.185.in-addr.arpa: {}
-  217.95.185.in-addr.arpa: {}
-  218.95.185.in-addr.arpa: {}
-  219.95.185.in-addr.arpa: {}
-  224-28.218.199.91.in-addr.arpa: {}
-  4.8.c.f.5.0.a.2.ip6.arpa: {}
-  8.2.c.2.c.7.6.0.1.0.0.2.ip6.arpa: {}
-  big-hug.ch: {}
-  broesme.li: {}
-  c-m.io: {}
-  chruezfahrt.ch: {}
-  churz.ch: {}
-  cloud-mountain.ch: {}
-  cloudmountain.ch: {}
-  communityrack.org: {}
-  glattaltravel.ch: {}
-  meine-kreuzfahrt.ch: {}
-  meinekreuzfahrt.ch: {}
-  stueck.li: {}
-  stueckli.ch: {}
-  t0b.ch: {}
-  t3u.me: {}
-  tbr.pw: {}
-  tischbombeschnauz.ch: {}
-  tobru.ch: {}
-  tobru.guru: {}
-  tobrunet.ch: {}
-  tobrunet.in: {}
-  tobrunet.xyz: {}
-  xn--chrzfahrt-s9a.ch: {}
-  xn--stck-1ra.li: {}
-  xn--stckli-4ya.ch: {}
-
+  staticsite.ch: {}
+  phpsite.ch: {}
+  pythonsite.ch: {}
+  rubysite.ch: {}
