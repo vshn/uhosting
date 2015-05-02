@@ -13,8 +13,8 @@ class uhosting::profiles::uwsgi::python {
   class { '::python':
     version    => 'system',
     pip        => true,
-    dev        => false,
-    virtualenv => false,
+    dev        => true,
+    virtualenv => true,
     gunicorn   => false,
   } ->
   python::pip { 'uwsgitop': ensure => present }
