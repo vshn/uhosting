@@ -177,16 +177,17 @@ define uhosting::resources::site (
           $plugins = 'python'
           if $sitedata['pip_packages'] {
             $virtualenv_dir = "${homedir}/virtualenv"
+            $pips = prefix(keys($sitedata['pip_packages']),"${name}-")
             python::virtualenv { $virtualenv_dir:
               ensure => $ensure,
               owner  => $name,
               group  => $name,
             } ->
-            # TODO allow parameter override from hiera
-            python::pip { $sitedata['pip_packages']:
-              ensure     => $ensure,
-              virtualenv => $virtualenv_dir,
-              owner      => $name,
+            uhosting::helper::python_pip { $pips:
+              ensure       => $ensure,
+              orig_name    => $name,
+              virtualenv   => $virtualenv_dir,
+              pip_packages => $sitedata['pip_packages'],
             }
           }
           if $uwsgi_params {
@@ -227,7 +228,9 @@ define uhosting::resources::site (
       ssl      => $ssl,
       ssl_only => $ssl,
     }
-    create_resources('::nginx::resource::location',$sitedata['vhost_locations'],$location_defaults)
+    create_resources('::nginx::resource::location',
+      prefix($sitedata['vhost_locations'],"${name}-")
+      ,$location_defaults)
   }
 
   case $sitedata['database'] {
