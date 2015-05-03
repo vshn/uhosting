@@ -175,11 +175,6 @@ define uhosting::resources::site (
         'python': {
           include uhosting::profiles::uwsgi::python
           $plugins = 'python'
-          if ! $sitedata['wsgi-file'] {
-            fail("MUST DEFINE 'wsgi-file' on ${name}")
-          } else {
-            validate_absolute_path($sitedata['wsgi-file'])
-          }
           if $sitedata['pip_packages'] {
             $virtualenv_dir = "${homedir}/virtualenv"
             python::virtualenv { $virtualenv_dir:
@@ -194,17 +189,11 @@ define uhosting::resources::site (
               owner      => $name,
             }
           }
-          $vassal_params_default = {
-            'wsgi-file' => $sitedata['wsgi-file'],
-          }
           if $uwsgi_params {
-            $vassal_params = merge($vassal_params_default,$uwsgi_params)
-          } else {
-            $vassal_params = $vassal_params_default
+            $vassal_params = $uwsgi_params
           }
           file { "${vassals_dir}/${name}.ini":
             content => template('uhosting/uwsgi_vassal.ini.erb'),
-            require => Class['uhosting::profiles::uwsgi::php'],
           }
           $vhost_defaults = {
             location_raw_append  => [
