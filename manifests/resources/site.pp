@@ -162,7 +162,7 @@ define uhosting::resources::site (
           }
           file { "${vassals_dir}/${name}.ini":
             content => template('uhosting/uwsgi_vassal.ini.erb'),
-            require => Class['uhosting::profiles::uwsgi::php'],
+            require => Class['uhosting::profiles::uwsgi::ruby'],
           }
           $vhost_defaults = {
             location_raw_append  => [
@@ -194,6 +194,7 @@ define uhosting::resources::site (
           }
           file { "${vassals_dir}/${name}.ini":
             content => template('uhosting/uwsgi_vassal.ini.erb'),
+            require => Class['uhosting::profiles::uwsgi::python'],
           }
           $vhost_defaults = {
             location_raw_append  => [
