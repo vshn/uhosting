@@ -52,7 +52,7 @@ class uhosting::profiles::mariadb (
   }
 
   ## install bindings
-  mysql::bindings {
+  class { 'mysql::bindings':
     client_dev    => true,
     php_enable    => true,
     python_enable => true,
