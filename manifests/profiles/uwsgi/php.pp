@@ -5,8 +5,21 @@ class uhosting::profiles::uwsgi::php {
     'uwsgi-plugin-php':
       ensure  => installed,
       require => Package['uwsgi-core'];
-    'php5-cli':
-      ensure => installed;
+  }
+
+  class { '::php':
+    manage_repos => false,
+    fpm          => false,
+    dev          => true,
+    composer     => true,
+    pear         => true,
+    phpunit      => false,
+    extensions   => {
+      'imagick'  => { 'provider' => 'apt' },
+      'gmp'      => { 'provider' => 'apt' },
+      'mcrypt'   => { 'provider' => 'apt' },
+      'json'     => { 'provider' => 'apt' },
+    }
   }
 
 }
