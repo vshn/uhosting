@@ -19,6 +19,7 @@ class uhosting::profiles::uwsgi::php {
       'gmp'      => { 'provider' => 'apt' },
       'mcrypt'   => { 'provider' => 'apt' },
       'json'     => { 'provider' => 'apt' },
+      'mysqlnd'  => { 'provider' => 'apt' },
     }
   }
 

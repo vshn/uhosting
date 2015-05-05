@@ -54,9 +54,6 @@ class uhosting::profiles::mariadb (
   ## install bindings
   class { 'mysql::bindings':
     client_dev    => true,
-    php_enable    => true,
-    python_enable => true,
-    ruby_enable   => true,
   }
 
   ### Resources
