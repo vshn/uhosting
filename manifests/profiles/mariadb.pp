@@ -51,11 +51,6 @@ class uhosting::profiles::mariadb (
     version => 'v1.4.0',
   }
 
-  ## install bindings
-  class { 'mysql::bindings':
-    client_dev    => true,
-  }
-
   ### Resources
   ## Get sites from hiera
   $sitehash = hiera('uhosting::sites')
