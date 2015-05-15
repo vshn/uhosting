@@ -128,7 +128,9 @@ define uhosting::resources::site (
           $plugins = 'php'
           # TODO add some php5enmod logic
           $vassal_params_default = {
-            'php-set' => "error_log=/var/log/php/${name}.log",
+            'static-skip-ext' => '.php',
+            'check-static'    => $webroot,
+            'php-set'         => "error_log=/var/log/php/${name}.log",
           }
           if $uwsgi_params {
             $vassal_params = merge($vassal_params_default,$uwsgi_params)
