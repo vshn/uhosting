@@ -131,8 +131,10 @@ define uhosting::resources::site (
             'static-skip-ext' => '.php',
             'check-static'    => $webroot,
             'php-docroot'     => $webroot,
+            'chdir'           => $webroot,
             'php-allowed-ext' => '.php',
             'php-set'         => "error_log=/var/log/php/${name}.log",
+            'php-index'       => 'index.php',
           }
           if $uwsgi_params {
             $vassal_params = merge($vassal_params_default,$uwsgi_params)
