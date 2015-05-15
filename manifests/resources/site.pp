@@ -127,8 +127,13 @@ define uhosting::resources::site (
           include uhosting::profiles::uwsgi::php
           $plugins = 'php'
           # TODO add some php5enmod logic
+          $vassal_params_default = {
+            'php-set' => "error_log=/var/log/php/${name}.log",
+          }
           if $uwsgi_params {
-            $vassal_params = $uwsgi_params
+            $vassal_params = merge($vassal_params_default,$uwsgi_params)
+          } else {
+            $vassal_params = $vassal_params_default
           }
           file { "${vassals_dir}/${name}.ini":
             content => template('uhosting/uwsgi_vassal.ini.erb'),
