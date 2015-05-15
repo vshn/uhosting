@@ -147,7 +147,7 @@ define uhosting::resources::site (
             index_files          => ['index.php'],
             location_raw_append  => [
               'include uwsgi_params;',
-              'try_files $uri /index.php =404;',
+              'try_files $uri /index.php /index.html =404;',
               'uwsgi_modifier1 14;',
               "uwsgi_pass unix:/run/uwsgi/${name}.socket;",
              ],
