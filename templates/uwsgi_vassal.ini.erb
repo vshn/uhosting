@@ -8,7 +8,7 @@ stats = /run/uwsgi/<%= @name %>.stats.socket
 logto = /var/log/uwsgi/<%= @name %>.log
 
 <%- if @vassal_params then @vassal_params.each do |k,v| -%>
-  <%- if v != '' -%>
-<%= k %> = <%= v %>
-  <%- end -%>
+  <%- if v != '' then k.each do |av| -%>
+<%= k %> = <%= av %>
+ <%- end end -%>
 <%- end end -%>
