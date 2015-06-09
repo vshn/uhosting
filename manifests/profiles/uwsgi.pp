@@ -37,4 +37,10 @@ class uhosting::profiles::uwsgi {
     mode   => '0775',
   }
 
+  # a world accessible spooler dir
+  file { '/var/spool/uwsgi':
+    ensure => directory,
+    mode   => '0777',
+  }
+
 }
