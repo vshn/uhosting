@@ -100,13 +100,14 @@ define uhosting::resources::site (
 
   ## Site user account
   identity::user { $name:
-    ensure  => $ensure,
-    uid     => $uid,
-    comment => "Site account for ${name}",
-    shell   => '/usr/sbin/nologin',
-    home    => $homedir,
-    groups  => [ 'www-data' ],
-    require => File['/var/www'],
+    ensure   => $ensure,
+    uid      => $uid,
+    comment  => "Site account for ${name}",
+    shell    => '/usr/sbin/nologin',
+    home     => $homedir,
+    groups   => [ 'www-data' ],
+    ssh_keys => $sitedata['ssh_keys'],
+    require  => File['/var/www'],
   } ->
   # create webroot
   file { $webroot:
