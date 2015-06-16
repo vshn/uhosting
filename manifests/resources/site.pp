@@ -33,6 +33,13 @@ define uhosting::resources::site (
     $ensure = 'present'
   }
 
+  # ensure handling
+  if $sitedata['siteuser_shell'] {
+    $siteuser_shell = $sitedata['siteuser_shell']
+  } else {
+    $siteuser_shell = '/usr/sbin/nologin'
+  }
+
   # uid checking
   if $sitedata['uid'] {
     if ! is_integer($sitedata['uid']) {
@@ -103,7 +110,7 @@ define uhosting::resources::site (
     ensure   => $ensure,
     uid      => $uid,
     comment  => "Site account for ${name}",
-    shell    => '/usr/sbin/nologin',
+    shell    => $siteuser_shell,
     home     => $homedir,
     groups   => [ 'www-data' ],
     ssh_keys => $sitedata['ssh_keys'],
