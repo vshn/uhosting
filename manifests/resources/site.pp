@@ -73,8 +73,13 @@ define uhosting::resources::site (
     } else {
       fail('A CERTIFICATE WITHOUT A KEY MAKES NO SENSE')
     }
+    if $sitedata['ssl_rewrite_to_https'] != '' {
+      validate_bool($sitedata['ssl_rewrite_to_https'])
+      $rewrite_to_https = $sitedata['ssl_rewrite_to_https']
+    } else {
+      $rewrite_to_https = true
+    }
     $ssl = true
-    $rewrite_to_https = true
     $hsts = { 'Strict-Transport-Security' => '"max-age=63072000; includeSubdomains; preload"' }
     $ssl_dhparam = '/etc/ssl/certs/dhparam.pem'
   } else {
