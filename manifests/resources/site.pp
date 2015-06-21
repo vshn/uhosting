@@ -154,10 +154,10 @@ define uhosting::resources::site (
             require => Class['uhosting::profiles::uwsgi::php'],
           }
           $vhost_defaults = {
-            index_files          => ['index.php'],
-            location_raw_append  => [
+            index_files         => ['index.php'],
+            try_files           => [ '$uri', '$uri/', '/index.php', '/index.html', '=404' ],
+            location_raw_append => [
               'include uwsgi_params;',
-              'try_files $uri $uri/ /index.php /index.html =404;',
               'uwsgi_modifier1 14;',
               "uwsgi_pass unix:/run/uwsgi/${name}.socket;",
              ],
