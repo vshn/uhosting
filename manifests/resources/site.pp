@@ -56,6 +56,30 @@ define uhosting::resources::site (
     $uwsgi_params = $sitedata['uwsgi_params']
   }
 
+  # environment variables
+  if $sitedata['env_vars'] {
+    validate_hash($sitedata['env_vars'])
+    $env_vars = $sitedata['env_vars']
+  }
+  if $sitedata['db_user'] {
+    $db_user = $sitedata['db_user']
+  } else {
+    $db_user = $name
+  }
+  if $sitedata['db_name'] {
+    $db_name = $sitedata['db_name']
+  } else {
+    $db_name = $name
+  }
+  $default_env_vars = {
+    'sitename' => $name,
+    'stacktype' => $sitedata['stack_type'],
+    'db_name' => $db_name,
+    'db_user' => $db_user,
+    'db_password' => $sitedata['db_password'],
+  }
+  $_env_vars = merge($default_env_vars,$env_vars)
+
   # system packages
   # TODO: really needed?
   if $sitedata['system_packages'] {
@@ -126,6 +150,12 @@ define uhosting::resources::site (
     ensure => directory,
     owner  => $name,
     group  => $name,
+  } ->
+  file { "${homedir}/.bash_aliases":
+    ensure  => $ensure,
+    content => template('uhosting/bash_envvars.erb'),
+    owner   => $name,
+    group   => $name,
   }
 
   case $sitedata['stack_type'] {
@@ -165,7 +195,7 @@ define uhosting::resources::site (
               'include uwsgi_params;',
               'uwsgi_modifier1 14;',
               "uwsgi_pass unix:/run/uwsgi/${name}.socket;",
-             ],
+            ],
           }
         }
         'ruby': {
