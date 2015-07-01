@@ -20,7 +20,13 @@ define uhosting::resources::site (
       'suffix' => $suffix,
       'prefix' => [ 'www.' ],
     }
-    $server_names = generate_server_names($sitedata['server_names'],$supre)
+    $server_names_generated = generate_server_names($sitedata['server_names'],$supre)
+    if $sitedata['server_names_extra'] {
+      validate_array($sitedata['server_names_extra'])
+      $server_names = union($server_names_generated,$sitedata['server_names_extra'])
+    } else {
+      $server_names = $server_names_generated
+    }
   } else {
     fail("'server_names' FOR ${name} IS NOT CONFIGURED")
   }
