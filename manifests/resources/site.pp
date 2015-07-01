@@ -37,7 +37,7 @@ define uhosting::resources::site (
   if $sitedata['siteuser_shell'] {
     $siteuser_shell = $sitedata['siteuser_shell']
   } else {
-    $siteuser_shell = '/usr/sbin/nologin'
+    $siteuser_shell = '/bin/bash'
   }
 
   # uid checking
@@ -77,6 +77,7 @@ define uhosting::resources::site (
     'db_name' => $db_name,
     'db_user' => $db_user,
     'db_password' => $sitedata['db_password'],
+    'db_host' => 'localhost',
   }
   $_env_vars = merge($default_env_vars,$env_vars)
 

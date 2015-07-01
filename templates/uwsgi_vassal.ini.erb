@@ -14,3 +14,8 @@ logto = /var/log/uwsgi/<%= @name %>.log
 <%= k %> = <%= v %>
  <%- end end -%>
 <%- end end -%>
+
+; environment variables
+<%- @_env_vars.each do |k,v| -%>
+env = <%= k.upcase %>=<%= v %>
+<%- end -%>
