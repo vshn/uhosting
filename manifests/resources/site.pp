@@ -142,13 +142,18 @@ define uhosting::resources::site (
   }
 
   ## Site user account
+  if $sitedata['ssh_keys'] {
+    $_groups = [ 'www-data', 'sshlogin' ]
+  } else {
+    $_groups = [ 'www-data' ]
+  }
   identity::user { $name:
     ensure   => $ensure,
     uid      => $uid,
     comment  => "Site account for ${name}",
     shell    => $siteuser_shell,
     home     => $homedir,
-    groups   => [ 'www-data' ],
+    groups   => $_groups,
     ssh_keys => $sitedata['ssh_keys'],
     require  => File['/var/www'],
   } ->
