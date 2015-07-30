@@ -1,30 +1,31 @@
 forge "http://forge.puppetlabs.com"
 
 # Library modules
-mod "puppetlabs/concat"
-mod "puppetlabs/stdlib"
-mod "puppetlabs/inifile"
-mod "puppetlabs/vcsrepo"
-mod "richardc/datacat"
+mod "puppetlabs/concat", '1.2.4'
+mod "puppetlabs/stdlib", '4.7.0'
+mod "puppetlabs/inifile", '1.4.1'
+mod "puppetlabs/vcsrepo", '1.3.1'
+mod "richardc/datacat", '0.6.1'
 
 # Basic / System modules
-mod "puppetlabs/apt"
-mod "puppetlabs/firewall"
-mod "rodjek/logrotate"
-mod "vshnops/identity"
+mod "puppetlabs/apt", '2.1.1'
+mod "puppetlabs/firewall", '1.7.0'
+mod "rodjek/logrotate", '1.1.1'
+mod "vshn/identity", '3.0.3'
+mod "ajcrowe/supervisord", '0.5.2'
 
 # Language modules
-mod "puppetlabs/ruby"
-mod "stankevich/python"
-mod "mayflower/php"
-mod "puppetlabs/java"
+mod "puppetlabs/ruby", '0.4.0'
+mod "stankevich/python", '1.9.5'
+mod "mayflower/php", '3.4.1'
+mod "puppetlabs/java", '1.4.1'
 
 # Application modules
-mod "jfryman/nginx"
-mod "puppetlabs/mysql"
-mod "puppetlabs/postgresql"
-mod "tobru/knot"
-mod 'webhookd',
+mod "jfryman/nginx", '0.2.7'
+mod "puppetlabs/mysql", '3.5.0'
+mod "puppetlabs/postgresql", '4.5.0'
+mod "tobru/knot", '1.0.1'
+mod 'tobru-webhookd',
   :git => 'https://github.com/tobru/puppet-webhookd.git'
 
 # Disabled modules
