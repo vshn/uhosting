@@ -179,7 +179,7 @@ define uhosting::resources::site (
       include uhosting::profiles::uwsgi
       case $sitedata['uwsgi_plugin'] {
         'php': {
-          include uhosting::profiles::uwsgi::php
+          include uhosting::profiles::php
           $plugins = 'php'
           # TODO add some php5enmod logic
           $vassal_params_default = {
@@ -198,7 +198,7 @@ define uhosting::resources::site (
           }
           file { "${vassals_dir}/${name}.ini":
             content => template('uhosting/uwsgi_vassal.ini.erb'),
-            require => Class['uhosting::profiles::uwsgi::php'],
+            require => Class['uhosting::profiles::php'],
           }
           $vhost_defaults = {
             index_files         => ['index.php'],
@@ -273,6 +273,77 @@ define uhosting::resources::site (
         default: {
           fail("UWSGI PLUGIN UNKNOWN")
         }
+      }
+    }
+    'phpfpm': {
+      include uhosting::profiles::nginx
+      include uhosting::profiles::supervisord
+      include uhosting::profiles::php
+      $fpm_socket = "/var/run/php5-fpm-${name}.sock"
+      $vhost_defaults = {
+        index_files => [ 'index.php' ],
+        try_files   => [ '$uri', '$uri/', '/index.php', '/index.html', '=404' ],
+        fastcgi     => $fpm_socket,
+      }
+      # PHP-FPM pool
+      $default_php_flags = {
+        'display_errors'         => 'off',
+        'display_startup_errors' => 'off',
+      }
+      if $sitedata['php_flags'] {
+        validate_hash($sitedata['php_flags'])
+        $_php_flags = merge($default_php_flags,$sitedata['php_flags'])
+      } else {
+        $_php_flags = $default_php_flags
+      }
+      # php_values
+      $default_php_values = {
+      }
+      if $sitedata['php_values'] {
+        validate_hash($sitedata['php_values'])
+        $_php_values = merge($default_php_values,$sitedata['php_values'])
+      } else {
+        $_php_values = $default_php_values
+      }
+      # php_admin_values
+      if $sitedata['php_admin_values'] {
+        validate_hash($sitedata['php_admin_values'])
+        $_php_admin_values = $sitedata['php_admin_values']
+      } else {
+        $_php_admin_values = {}
+      }
+      # php_admin_flags
+      if $sitedata['php_admin_flags'] {
+        validate_hash($sitedata['php_admin_flags'])
+        $_php_admin_flags = $sitedata['php_admin_flags']
+      } else {
+        $_php_admin_flags = {}
+      }
+      $fpm_pm                   = 'dynamic'
+      $fpm_listen_backlog       = '-1'
+      $fpm_max_children         = 50
+      $fpm_start_servers        = 5
+      $fpm_min_spare_servers    = 5
+      $fpm_max_spare_servers    = 35
+      $fpm_max_requests         = 0 # no respawning
+      $fpm_process_idle_timeout = undef
+      phpfpm_pool { $name:
+        ensure                   => $ensure,
+        fpm_pm                   => $fpm_pm,
+        fpm_socket               => $fpm_socket,
+        fpm_listen_backlog       => $fpm_listen_backlog,
+        fpm_max_children         => $fpm_max_children,
+        fpm_start_servers        => $fpm_start_servers,
+        fpm_min_spare_servers    => $fpm_min_spare_servers,
+        fpm_max_spare_servers    => $fpm_max_spare_servers,
+        fpm_max_requests         => $fpm_max_requests,
+        fpm_process_idle_timeout => $fpm_process_idle_timeout,
+        php_admin_values         => $_php_admin_values,
+        php_admin_flags          => $_php_admin_flags,
+        php_flags                => $_php_flags,
+        php_values               => $_php_values,
+        env_variables            => $_env_vars,
+        require                  => Class['uhosting::profiles::php'],
       }
     }
     default: {

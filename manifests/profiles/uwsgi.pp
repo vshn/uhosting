@@ -3,14 +3,18 @@ class uhosting::profiles::uwsgi {
 
   # We run in Emperor mode!
   apt::source { 'osso_ppa':
-    comment     => 'uwsgi osso PPA',
-    location    => 'http://ppa.launchpad.net/osso/uwsgi/ubuntu',
-    release     => $::lsbdistcodename,
-    repos       => 'main',
-    key         => 'A8E0D05D50EC0EDA4958B44535CF57C9BD6901E2',
-    key_server  => 'hkp://keyserver.ubuntu.com:80',
-    include_src => false,
-    include_deb => true,
+    comment  => 'uwsgi osso PPA',
+    location => 'http://ppa.launchpad.net/osso/uwsgi/ubuntu',
+    release  => $::lsbdistcodename,
+    repos    => 'main',
+    key      => {
+      'id' => 'A8E0D05D50EC0EDA4958B44535CF57C9BD6901E2',
+      'server' => 'hkp://keyserver.ubuntu.com:80',
+    },
+    include  => {
+      'src' => false,
+      'deb' => true,
+    }
   } ->
   package { [
     'uwsgi-core',

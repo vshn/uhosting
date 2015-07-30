@@ -1,0 +1,62 @@
+[global]
+pid = /var/run/php5-fpm-<%= @name %>.pid
+error_log = /var/log/php5-fpm-<%= @name %>.log
+log_level = notice
+emergency_restart_threshold = 0
+emergency_restart_interval = 0
+process_control_timeout = 0
+daemonize = no
+
+[<%= @name %>]
+listen = <%= @fpm_socket %>
+listen.owner = www-data
+listen.group = www-data
+listen.mode = 0660
+listen.backlog = <%= @fpm_listen_backlog %> ; depends on pm
+
+user = <%= @name %>
+group = <%= @name %>
+
+ping.path = /ping
+ping.response = pong
+
+request_slowlog_timeout = 0
+slowlog = /var/log/php5-fpm-slow-<%= @name %>.log
+catch_workers_output = on
+
+<%- if @fpm_pm == 'ondemand' -%>
+pm = ondemand
+pm.max_children = <%= @fpm_max_children %>
+pm.process_idle_timeout = <%= @fpm_process_idle_timeout %>
+pm.max_requests = <%= @fpm_max_requests %>
+<%- elsif @fpm_pm == 'dynamic' -%>
+pm = dynamic
+pm.max_children = <%= @fpm_max_children %>
+pm.max_requests = <%= @fpm_max_requests %>
+pm.start_servers = <%= @fpm_start_servers %>
+pm.min_spare_servers = <%= @fpm_min_spare_servers %>
+pm.max_spare_servers = <%= @fpm_max_spare_servers %>
+<%- end -%>
+pm.status_path = /fpm-status
+
+<%- if @php_admin_values -%>
+<%- @php_admin_values.each do |k,v| -%>
+php_admin_value[<%= k %>] = <%= v %>
+<%- end end -%>
+<%- if @php_admin_flags -%>
+<%- @php_admin_flags.each do |k,v| -%>
+php_admin_flag[<%= k %>] = <%= v %>
+<%- end end -%>
+<%- if @php_flags -%>
+<%- @php_flags.each do |k,v| -%>
+php_flag[<%= k %>] = <%= v %>
+<%- end end -%>
+<%- if @php_values -%>
+<%- @php_values.each do |k,v| -%>
+php_value[<%= k %>] = <%= v %>
+<%- end end -%>
+<%- if @env_variables -%>
+<%- @env_variables.each do |k,v| -%>
+env[<%= k.upcase %>] = "<%= v %>"
+<%- end end -%>
+

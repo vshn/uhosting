@@ -1,15 +1,17 @@
 #
-class uhosting::profiles::uwsgi::php {
+class uhosting::profiles::php {
 
-  package {
-    'uwsgi-plugin-php':
-      ensure  => installed,
-      require => Package['uwsgi-core'];
+  if defined(Class['uhosting::profiles::uwsgi']) {
+    package {
+      'uwsgi-plugin-php':
+        ensure  => installed,
+        require => Package['uwsgi-core'];
+    }
   }
 
   class { '::php':
     manage_repos => false,
-    fpm          => false,
+    fpm          => true,
     dev          => true,
     composer     => true,
     pear         => true,
