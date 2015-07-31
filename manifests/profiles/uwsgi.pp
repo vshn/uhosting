@@ -47,4 +47,12 @@ class uhosting::profiles::uwsgi {
     mode   => '0777',
   }
 
+  # manage vassals_dir
+  file { '/etc/uwsgi-emperor/vassals':
+    ensure  => directory,
+    purge   => true,
+    recurse => true,
+  }
+
+
 }
