@@ -283,7 +283,7 @@ define uhosting::resources::site (
       $vhost_defaults = {
         index_files => [ 'index.php' ],
         try_files   => [ '$uri', '$uri/', '/index.php', '/index.html', '=404' ],
-        fastcgi     => $fpm_socket,
+        fastcgi     => "unix:${fpm_socket}",
       }
       # PHP-FPM pool
       $default_php_flags = {
