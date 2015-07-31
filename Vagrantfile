@@ -3,7 +3,7 @@
 require 'yaml'
 
 Vagrant.configure(2) do |config|
-  config.vm.box = "puppetlabs/ubuntu-14.04-64-puppet"
+  config.vm.box = "puppetlabs/ubuntu-14.04-64-nocm"
 
   config.vm.define "default" do |default|
 
@@ -26,6 +26,7 @@ if [ ! -f /etc/.shell_already_provisioned ]; then
   apt-get update >/dev/null
   echo "[INFO] Configuration Puppet..."
   sed -i '/templatedir/d' /etc/puppet/puppet.conf
+  . /vagrant/vagrant/install_puppet.sh
   touch /etc/.shell_already_provisioned
 else
   echo "[INFO] shell provisioning already done..."
