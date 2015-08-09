@@ -5,7 +5,6 @@ define uhosting::resources::site (
 
   $sitedata    = $data[$name]
   $homedir     = "/var/www/${name}"
-  $webroot     = "${homedir}/public_html"
   $vassals_dir = '/etc/uwsgi-emperor/vassals'
 
   # compose server_names
@@ -39,11 +38,18 @@ define uhosting::resources::site (
     $ensure = 'present'
   }
 
-  # ensure handling
+  # shell of site user
   if $sitedata['siteuser_shell'] {
     $siteuser_shell = $sitedata['siteuser_shell']
   } else {
     $siteuser_shell = '/bin/bash'
+  }
+
+  # alternative webroot
+  if $sitedata['webroot'] {
+    $webroot = $sitedata['webroot']
+  } else {
+    $webroot = "${homedir}/public_html"
   }
 
   # uid checking
@@ -234,7 +240,9 @@ define uhosting::resources::site (
             location_raw_append  => [
               'include uwsgi_params;',
               'uwsgi_modifier1 7;',
-              "uwsgi_pass unix:/run/uwsgi/${name}.socket;",
+              'if (!-f $request_filename) {',
+              "  uwsgi_pass unix:/run/uwsgi/${name}.socket;",
+              '}',
             ],
           }
         }
