@@ -1,10 +1,29 @@
 #
-class uhosting::profiles::nginx inherits ::uhosting {
+class uhosting::profiles::nginx (
+  $nginx_ppa = false,
+) inherits ::uhosting {
 
   ## Create and manage directories
   file {
     '/var/www':
       ensure => directory;
+  }
+
+  if $nginx_ppa {
+    apt::source { 'nginx_ppa':
+      comment     => 'Nginx Mainline PPA',
+      location    => 'http://ppa.launchpad.net/nginx/development/ubuntu',
+      release     => $::lsbdistcodename,
+      repos       => 'main',
+      key         => {
+        'id' => '8B3981E7A6852F782CC4951600A6F0A3C300EE8C',
+        'server' => 'hkp://keyserver.ubuntu.com:80',
+      },
+      include     => {
+        'src' => false,
+        'deb' => true,
+      }
+    }
   }
 
   ## Install and configure Nginx
