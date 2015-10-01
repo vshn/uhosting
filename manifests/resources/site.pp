@@ -132,6 +132,7 @@ define uhosting::resources::site (
   $vhost_global_defaults = {
     ensure               => $ensure,
     ipv6_enable          => true,
+    ipv6_listen_options  => '',
     www_root             => $webroot,
     server_name          => $server_names,
     index_files          => ['index.html'],
