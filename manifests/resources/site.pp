@@ -110,8 +110,8 @@ define uhosting::resources::site (
     } else {
       fail('A CERTIFICATE WITHOUT A KEY MAKES NO SENSE')
     }
-    if $sitedata['ssl_rewrite_to_https'] != '' {
-      $rewrite_to_https = $sitedata['ssl_rewrite_to_https']
+    if $sitedata['ssl_rewrite_to_https'] == false {
+      $rewrite_to_https = false
     } else {
       $rewrite_to_https = true
     }
