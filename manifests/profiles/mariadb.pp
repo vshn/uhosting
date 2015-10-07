@@ -61,7 +61,7 @@ class uhosting::profiles::mariadb (
   $sites = keys($sitehash)
 
   ## Create the databases
-  resources::mariadb { $sites:
+  ::uhosting::resources::mariadb { $sites:
     data => $sitehash,
   }
 

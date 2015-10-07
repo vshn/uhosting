@@ -36,7 +36,7 @@ class uhosting (
 
   # create site resources
   $site_names = keys($sites)
-  resources::site { $site_names:
+  ::uhosting::resources::site { $site_names:
     data => $sites,
   }
 
