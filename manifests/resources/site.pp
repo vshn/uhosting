@@ -116,7 +116,7 @@ define uhosting::resources::site (
       $rewrite_to_https = true
     }
     $ssl = true
-    $hsts = { 'Strict-Transport-Security' => '"max-age=63072000; includeSubdomains; preload"' }
+    $hsts = { 'Strict-Transport-Security' => '"max-age=31536000"' }
     $ssl_dhparam = '/etc/ssl/certs/dhparam.pem'
   } else {
     $ssl_cert = undef
