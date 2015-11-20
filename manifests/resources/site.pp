@@ -368,6 +368,7 @@ define uhosting::resources::site (
   if $sitedata['app_profile'] {
     case $sitedata['app_profile'] {
       'owncloud': {
+        # TODO: uwsgi_params, system_packages, database, uwsgi_plugin
         # TODO: create defined type and migrate settings to there
         #::uhosting::app::owncloud { $name:
         #}
