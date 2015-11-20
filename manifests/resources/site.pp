@@ -363,21 +363,82 @@ define uhosting::resources::site (
   # $sitedata['vhost_params'] can be empty, so we merge it here
   # and don't use it as default value for create_resources
   $vhost_defaults1 = merge($vhost_global_defaults,$vhost_defaults)
-  $vhost_params = merge($vhost_defaults1,$sitedata['vhost_params'])
+
+  # if an app_profile is defined, use it
+  if $sitedata['app_profile'] {
+    case $sitedata['app_profile'] {
+      'owncloud': {
+        # TODO: create defined type and migrate settings to there
+        #::uhosting::app::owncloud { $name:
+        #}
+        # vhost settings
+        $app_vhost_params = {
+          use_default_location => false,
+          www_root             => $webroot,
+          rewrite_rules        => [
+            '^/caldav(.*)$ /remote.php/caldav$1 redirect',
+            '^/carddav(.*)$ /remote.php/carddav$1 redirect',
+            '^/webdav(.*)$ /remote.php/webdav$1 redirect',
+          ],
+        }
+        $vhost_params = merge($vhost_defaults1,$app_vhost_params)
+
+        # location settings
+        ::nginx::resource::location { "${name}-root":
+          vhost         => $name,
+          ssl           => $ssl,
+          ssl_only      => $ssl,
+          location      => '/',
+          www_root      => $webroot,
+          rewrite_rules => [
+            '^/.well-known/host-meta /public.php?service=host-meta last',
+            '^/.well-known/host-meta.json /public.php?service=host-meta-json last',
+            '^/.well-known/carddav /remote.php/carddav/ redirect',
+            '^/.well-known/caldav /remote.php/caldav/ redirect',
+            '^(/core/doc/[^\/]+/)$ $1/index.html',
+          ],
+          try_files     => ['$uri','$uri/','/index.php'],
+        }
+        ::nginx::resource::location { "${name}-php":
+          vhost               => $name,
+          ssl                 => $ssl,
+          ssl_only            => $ssl,
+          location            => '~ \.php(?:$|/)',
+          uwsgi               => "unix:/run/uwsgi/${name}.socket",
+          location_cfg_append => { 'uwsgi_modifier1' => '14' },
+        }
+        ::nginx::resource::location { "${name}-denies":
+          vhost               => $name,
+          ssl                 => $ssl,
+          ssl_only            => $ssl,
+          location            => '~ ^/(?:\.htaccess|data|config|db_structure\.xml|README)',
+          location_custom_cfg => { 'deny' => 'all' },
+        }
+
+      }
+      default: { fail("no such app_profile available: ${$sitedata['app_profile']}") }
+    }
+  } else {
+    # vhost settings
+    $vhost_params = merge($vhost_defaults1,$sitedata['vhost_params'])
+
+    # location settings
+    if $sitedata['vhost_locations'] {
+      $location_defaults = {
+        vhost    => $name,
+        ssl      => $ssl,
+        ssl_only => $ssl,
+      }
+      create_resources('::nginx::resource::location',
+        prefix($sitedata['vhost_locations'],"${name}-")
+        ,$location_defaults)
+    }
+  }
+
+  # Create Nginx vhost
   $vhost_resource = { "${name}" => $vhost_params }
   create_resources('::nginx::resource::vhost',$vhost_resource)
 
-  # locations
-  if $sitedata['vhost_locations'] {
-    $location_defaults = {
-      vhost    => $name,
-      ssl      => $ssl,
-      ssl_only => $ssl,
-    }
-    create_resources('::nginx::resource::location',
-      prefix($sitedata['vhost_locations'],"${name}-")
-      ,$location_defaults)
-  }
 
   case $sitedata['database'] {
     'mariadb': {
