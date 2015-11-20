@@ -52,6 +52,7 @@ class uhosting::profiles::uwsgi {
     ensure  => directory,
     purge   => true,
     recurse => true,
+    require => Package['uwsgi-emperor'],
   }
 
 
