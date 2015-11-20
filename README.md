@@ -52,7 +52,12 @@ Based on the following key technologies:
 A working hiera configuration is needed for full pleasure.
 
 The module depends on a lot of third party modules. Have a look at `vagrant/Puppetfile` to find
-out which ones.
+out which ones. Here is a list of the most important ones:
+
+* [nginx](https://forge.puppetlabs.com/jfryman/nginx)
+* [php](https://forge.puppetlabs.com/mayflower/php)
+* [mysql](https://forge.puppetlabs.com/puppetlabs/mysql)
+* [staging](https://forge.puppetlabs.com/nanliu/staging)
 
 ### Beginning with uhosting
 
@@ -70,7 +75,7 @@ This example sets up a Nginx with a virtual server for mysite.com.
 
 ## Usage
 
-Including the `uhosting` class won't to anything but validating the `uhosting::sites` hash and
+Including the `uhosting` class won't do anything but validating the `uhosting::sites` hash and
 calling the `resources::site` type using some stdlib-fu.
 The real magic happens in the `resources::site` class where it uses the parameters found in
 `uhosting::sites` to create the needed configuration.
