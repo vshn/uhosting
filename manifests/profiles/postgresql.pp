@@ -10,4 +10,6 @@ class uhosting::profiles::postgresql {
     #postgres_password          => 'TPSrep0rt!',
   }
 
+  notify { "PostgreSQL support is not yet finished. Consider contributing it please": }
+
 }
