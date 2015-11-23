@@ -2,21 +2,6 @@
 class uhosting::profiles::uwsgi {
 
   # We run in Emperor mode!
-  #Exec['apt_update'] -> Package <| |>
-  #apt::source { 'osso_ppa':
-  #  comment  => 'uwsgi osso PPA',
-  #  location => 'http://ppa.launchpad.net/osso/uwsgi/ubuntu',
-  #  release  => $::lsbdistcodename,
-  #  repos    => 'main',
-  #  key      => {
-  #    'id' => 'A8E0D05D50EC0EDA4958B44535CF57C9BD6901E2',
-  #    'server' => 'hkp://keyserver.ubuntu.com:80',
-  #  },
-  #  include  => {
-  #    'src' => false,
-  #    'deb' => true,
-  #  }
-  #} ->
   package { [
     'uwsgi-core',
     'uwsgi-emperor',
@@ -40,12 +25,12 @@ class uhosting::profiles::uwsgi {
   }
 
   # create directory for the uwsgi sockets
-  #file { '/run/uwsgi':
-  #  ensure => directory,
-  #  owner  => 'www-data',
-  #  group  => 'www-data',
-  #  mode   => '0775',
-  #}
+  file { '/var/lib/uhosting':
+    ensure => directory,
+    owner  => 'www-data',
+    group  => 'www-data',
+    mode   => '0775',
+  }
 
   # a world accessible spooler dir
   file { '/var/spool/uwsgi':

@@ -3,8 +3,8 @@ plugins = <%= @plugins %>
 chown-socket = www-data:www-data
 uid = <%= @name %>
 gid = <%= @name %>
-socket = /run/uwsgi/<%= @name %>.socket
-stats = /run/uwsgi/<%= @name %>.stats.socket
+socket = /var/lib/uhosting/<%= @name %>.socket
+stats = /var/lib/uhosting/<%= @name %>.stats.socket
 logto = /var/log/uwsgi/<%= @name %>.log
 
 <%- if @vassal_params then @vassal_params.each do |k,v| -%>
