@@ -1,9 +1,3 @@
-# WARNING
-
-**This module is its really early stages and not yet very well tested or even finished**
-
-Use at your own risk!
-
 #### Table of Contents
 
 1. [Overview](#overview)
@@ -22,10 +16,10 @@ Easy webhosting with a collection of profiles and easy resource creation.
 
 ## Module Description
 
-This module has a lot of opinionated content. It reflects my current idea of a simple,
+This module has a lot of opinionated content. It reflects our current idea of a simple,
 multi language hosting configuration.
 
-It serves to main purposes:
+It serves two main purposes:
 
 * A local Vagrant machine to try out webapplications in the same environment
   as it could later run on
@@ -35,11 +29,15 @@ It serves to main purposes:
 Based on the following key technologies:
 
 * Nginx
-* uWSGI
+* uWSGI or PHP-FPM
 * MariaDB
 * PostgreSQL
 * Knot DNS
 * Ubuntu 14.04 Server
+
+It also brings so called app profiles to pre-configure a virtual host for a specific app.
+Have a look under [manifests/app](/vshn/uhosting/tree/master/manifests/app) to see all
+available app profiles.
 
 ## Setup
 
@@ -61,7 +59,7 @@ out which ones. Here is a list of the most important ones:
 
 ### Beginning with uhosting
 
-Just include the `uhosting` class and define a bsic site in the `uhosting::sites` hash:
+Just include the `uhosting` class and define a basic site in the `uhosting::sites` hash:
 
 ```YAML
 uhosting::sites:
@@ -71,7 +69,8 @@ uhosting::sites:
     stack_type: 'static'
 ```
 
-This example sets up a Nginx with a virtual server for mysite.com.
+This example sets up Nginx with a virtual server for mysite.com, serving static pages from
+`/var/www/mysite_com/public_html`.
 
 ## Usage
 
@@ -83,6 +82,158 @@ The real magic happens in the `resources::site` class where it uses the paramete
 All components are installed only when needed. So when there is no site defined using a 
 database, it won't be installed. As soon as a site uses a database, the specific database
 is installed and configured. This applies also to Nginx, uWSGI, the language stack, Knot etc.
+
+## Reference
+
+### Parameters for `uhosting::sites`
+
+* **!**: mandatory
+* **x**: not in use when using an app profile
+
+Choose between `stack_type` and `app`, both cannot be used!
+
+* ! **_key** (string): The key of the hash defines the identifier of the site
+  and will be used to f.e. create a system user. Do not change it once it is set and Puppet has done it's job!
+* ! **server_names** (array of strings): Virtual domain names. `www.` will be added automatically
+* !x **stack_type** (string): Type of the hosting stack. Possible values: `static`, `uwsgi` and `phpfpm`. If the app parameter is set, this one has no use.
+  If the stack type is `uwsgi`, the parameter `uwsgi_plugin` needs to be configured too
+* **app** (string): Name of an app profile to use. If this parameter is set, some of the other parameters have no affect.
+* **app_settings** (hash of strings): Application specific parameters used in the app profile. See header of the corresponding manifest for a parameter description.
+* **database** (string): Type of database to manage for this site
+* **db_name** (string): If not set, the db name will be the same as the key
+* **db_password** (string): Plain text password to set for this site
+* **db_user** (string): If not set, the db user will be the same as the key
+* **ensure** (present/absent). Default is present. When set to absent all resources beloging to this site will get deleted
+* x **env_vars** (hash of strings): Additional environment variables to set
+* **server_names_extra** (array of strings): These server names will be added to the `server_names` and the generated ones
+* **siteuser_shell** (path): Defines the shell of the site user. Default: `/bin/bash`
+* **ssh_keys**: SSH keys to attach to the site user to allow SSH login into the site user
+* **ssl_cert** (path): Path to the ssl certificate on the server. This activates SSL on the vhost
+* **ssl_key** (path): Path to the ssl key on the server
+* **ssl_rewrite_to_https**: Redirects HTTP to HTTPS
+* **uid** (integer): UID of the site user. Default: Automatically chosen
+* x **uwsgi_params** (hash): Can be used to define additional uWSGI vassal settings or overwrite the default onces
+* x **uwsgi_plugin** (string): uWSGI plugin to load for this site
+* x **vhost_locations** (hash): Parameters for the `nginx::resource::location` type. Passed to `create_resources`
+* x **vhost_params** (hash): Parameters for the `nginx::resource::vhost` type. Can be used to add additional settings or overwrite the defaults
+* x **webroot** (path): Webroot of the site. Default: `/var/www/${name}/public_html`
+
+## SSL Configuration
+
+Together with defining an `ssl_cert` SSL gets activated on the vhost. It uses modern SSL ciphers, disables old SSL versions and
+adds a HSTS header.
+
+## Environment Variables
+
+Environment variables are set in the uWSGI configuration and as shell variables for the particular vhost/site user. By default
+the following variables are set:
+
+* **SITENAME**
+* **STACKTYPE**
+* **DB_NAME**
+* **DB_USER**
+* **DB_PASSWORD**
+* **DB_HOST**
+
+Adding new variables can be done using the `env_vars` (hash) parameter of the site.
+
+## App Profiles
+
+App profiles are used to quickly configure an app environment. It creates the vhost,
+app specific locations in the vhost, the app worker (uWSGI or PHP FPM) and the best settings
+for the app.
+
+An app profile is located under `manifests/app` and has the following parameters:
+* **app_settings**: Hash of different settings to influence the app configuration
+  from hiera. This is application specific and documented inside the defined type.
+
+
+All other parameters are coming from `site.pp` and are for internal use:
+* **ssl**
+* **vassals_dir**
+* **vhost_defaults**
+* **webroot**
+
+To create a new app profile:
+
+1. Fork this repository
+1. Add new defined type under `app/<appname>.pp`, take `owncloud.pp` as a boilerplate
+1. Create pull request
+
+## Stack Types
+
+The following stack types are known:
+
+* **static**: Serves static files from the public_html folder
+* **uwsgi**: Uses uWSGI as app worker, supports many languages
+* **phpfpm**: Uses PHP-FPM to serve PHP applications (use as last resort if uWSGI with PHP doesn't work)
+
+### Stack type `static`
+
+Just serves static files from `/var/www/<sitename>/public_html`
+
+### Stack type `uwsgi`
+
+Using this stack type asks for another parameter: `uwsgi_plugin`. Can be one of `php`, `ruby` or `python`.
+This stack type also allows adding more uWSGI parameters to the vassal configuration using
+the `uwsgi_params` (hash) site parameter.
+
+#### `php`
+
+Configures uWSGI for the PHP plugin and points Nginx to use that one.
+
+#### `ruby`
+
+Using this plugin it is necessary to add the `rack` parameter which must
+point to a `.ru` file. It then uses this file to start the Ruby application and point
+Nginx to this application.
+
+#### `python`
+
+To successfully start a Python app, uWSGI needs to know what to do. F.e. one
+can use the `uwsgi_param` `wsgi-file` to point to a WSGI file.
+
+When using this plugin, it's possible to install PIP into a virtualenv: Just
+define the PIP packages on the `pip_packages` site parameter (hash). When specifying
+PIP packages, a virtualenv is automatically created under `${homedir}/virtualenv`.
+
+
+### Stack type `phpfpm`
+
+This type configures a PHP-FPM master process (dynamic pools)
+for this site which is managed by SupervisorD.
+
+Settings can be influenced by the following site parameters:
+
+* **php_flags**
+* **php_values**
+* **php_admin_flags**
+* **php_admin_values**
+
+## Redirects
+
+The hash `uhosting::redirects` can contain a hash of domain redirects. Example (hiera):
+
+```
+uhosting::redirects:
+  mydestination.ch:
+    - 'alternativedomain1.com'
+    - 'alternativedomain2.com'
+    - 'alternativedomain3.com'
+    - 'alternativedomain4.com'
+```
+
+These redirects are written into `/etc/nginx/redirects.conf` which gets included into the
+Nginx configuration. A redirect is done using 301 redirects directly in Nginx.
+
+## DNS Server
+
+This module supports Knot as a DNS server and brings some helpers for using it:
+
+* **uhosting::dns_zones**: Hash of DNS zones
+* **uhosting::dns_zone_defaults**: Passed directly to [Knot](https://github.com/tobru/puppet-knot) Puppet module
+* **uhosting::dns_zone_keys**: Passed directly to [Knot](https://github.com/tobru/puppet-knot) Puppet module
+* **uhosting::dns_zone_remotes**: Passed directly to [Knot](https://github.com/tobru/puppet-knot) Puppet module
 
 ## Vagrant specials
 
@@ -104,48 +255,22 @@ in your local browser.
 Running Puppet again in the VM is done by callling the script `/vagrant/vagrant/runpuppet.sh`
 inside the VM as root.
 
-## Reference
-
-### Parameters for `uhosting::sites`
-
-* ! **_key** (string): The key of the hash defines the identifier of the site
-  and will be used to f.e. create a system user. Do not change it once it is set!
-* ! **server_names** (array of strings): Virtual domain names. `www.` will be added automatically
-* ! **stack_type** (string): Type of the hosting stack. Possible values: `static` and `uwsgi`
-  If the stack type is `uwsgi`, the parameter `uwsgi_plugin` needs to be configured too.
-* **vhost_params** (hash): Parameters for the `nginx::resource::vhost` type. Can be used to add
-  additional settings or overwrite the defaults.
-* **vhost_locations** (hash): Parameters for the `nginx::resource::location` type. Passed to `create_resources`.
-* **uid** (integer): uid of the siteuser which will be created. If unset it choses the next free.
-* **uwsgi_plugin** (string): uWSGI plugin to load for this site.
-* **uwsgi_params** (hash): Can be used to define additional uWSGI vassal settings or overwrite
-  the default onces.
-* **ssl_cert** (path): Path to the ssl certificate on the server. This activates SSL on the vhost.
-* **ssl_key** (path): Path to the ssl key on the server.
-* **database** (string): Type of database to manage for this site.
-* **db_password** (string): Plain text password to set for this site.
-* **db_user**: If not set, the db user will be the same as the key.
-* **db_name**: If not set, the db name will be the same as the key.
-
-! mandatory
-
-### Default settings
-
-* site user home directory: `/var/www/${name}`
-* website root: `/var/www/${name}/public_html`
-
 ## Limitations
 
 The module is only tested under Ubuntu 14.04 and will probably not run with other distributions.
 
-## Not yet documented features
+## Development
 
-* Redirects
-* DNS zones
+1. Fork it (https://github.com/vshn/uhosting/fork)
+2. Create your feature branch (`git checkout -b my-new-feature`)
+3. Commit your changes (`git commit -am 'Add some feature'`)
+4. Push to the branch (`git push origin my-new-feature`)
+5. Create a new Pull Request
 
-## Not yet implemented features
+### Not yet implemented features (Help appreciated)
 
 * PostgreSQL database handling
-* Site removal
+* Site removal (needs testing)
 * PHP extension handling
 * Redis
+

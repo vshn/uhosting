@@ -1,3 +1,16 @@
+# == Class: uhosting::profiles::postgresql
+#
+# Installs and manages PostgreSQL server
+#
+# === Parameters
+#
+# === Authors
+#
+# Tobias Brunner <tobias.brunner@vshn.ch>
+#
+# === Copyright
+#
+# Copyright 2015 Tobias Brunner, VSHN AG
 #
 class uhosting::profiles::postgresql {
 

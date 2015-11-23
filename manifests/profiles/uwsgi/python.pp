@@ -1,3 +1,14 @@
+# == Class: uhosting::profiles::uwsgi::python
+#
+# Installs and manages Python together with uWSGI
+#
+# === Authors
+#
+# Tobias Brunner <tobias.brunner@vshn.ch>
+#
+# === Copyright
+#
+# Copyright 2015 Tobias Brunner, VSHN AG
 #
 class uhosting::profiles::uwsgi::python {
 

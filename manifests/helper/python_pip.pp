@@ -1,3 +1,14 @@
+# == Define: uhosting::helper::python_pip
+#
+# Installs PIP packages
+#
+# === Authors
+#
+# Tobias Brunner <tobias.brunner@vshn.ch>
+#
+# === Copyright
+#
+# Copyright 2015 Tobias Brunner, VSHN AG
 #
 define uhosting::helper::python_pip (
   $ensure,

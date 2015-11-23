@@ -1,3 +1,14 @@
+# == Class: uhosting::profiles::uwsgi::ruby
+#
+# Installs and manages Ruby together with uWSGI
+#
+# === Authors
+#
+# Tobias Brunner <tobias.brunner@vshn.ch>
+#
+# === Copyright
+#
+# Copyright 2015 Tobias Brunner, VSHN AG
 #
 class uhosting::profiles::uwsgi::ruby {
 

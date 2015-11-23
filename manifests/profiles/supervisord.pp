@@ -1,3 +1,15 @@
+# == Class: uhosting::profiles::supervisord
+#
+# Installs and manages Supervisord
+# Mainly used for PHP FPM pools
+#
+# === Authors
+#
+# Tobias Brunner <tobias.brunner@vshn.ch>
+#
+# === Copyright
+#
+# Copyright 2015 Tobias Brunner, VSHN AG
 #
 class uhosting::profiles::supervisord {
 

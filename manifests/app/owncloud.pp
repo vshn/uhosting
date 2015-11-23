@@ -38,6 +38,14 @@
 #   If manage_package is true this can be used to chose which package version to install.
 #   It also pins this application version in APT.
 #
+# === Authors
+#
+# Tobias Brunner <tobias.brunner@vshn.ch>
+#
+# === Copyright
+#
+# Copyright 2015 Tobias Brunner, VSHN AG
+#
 define uhosting::app::owncloud (
   $app_settings,
   $ssl,

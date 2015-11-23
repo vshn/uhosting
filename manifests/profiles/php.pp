@@ -1,3 +1,14 @@
+# == Class: uhosting::profiles::php
+#
+# Installs and manages PHP, including uWSGI plugin installation
+#
+# === Authors
+#
+# Tobias Brunner <tobias.brunner@vshn.ch>
+#
+# === Copyright
+#
+# Copyright 2015 Tobias Brunner, VSHN AG
 #
 class uhosting::profiles::php {
 

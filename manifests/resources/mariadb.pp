@@ -1,3 +1,19 @@
+# == Define: uhosting::resources::mariadb
+#
+# Creates MariaDB user, database and grants
+#
+# === Parameters
+#
+# [*data*]
+#   Hash of settings to be used for database creation
+#
+# === Authors
+#
+# Tobias Brunner <tobias.brunner@vshn.ch>
+#
+# === Copyright
+#
+# Copyright 2015 Tobias Brunner, VSHN AG
 #
 define uhosting::resources::mariadb (
   $data,

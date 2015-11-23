@@ -1,3 +1,20 @@
+# == Class: uhosting::profiles::nginx
+#
+# Installs and manages Nginx webserver (nginx-extras)
+# It also opens firewall settings
+#
+# === Parameters
+#
+# [*nginx_ppa*]
+#   If true the Nginx mainline PPA will get used
+#
+# === Authors
+#
+# Tobias Brunner <tobias.brunner@vshn.ch>
+#
+# === Copyright
+#
+# Copyright 2015 Tobias Brunner, VSHN AG
 #
 class uhosting::profiles::nginx (
   $nginx_ppa = false,

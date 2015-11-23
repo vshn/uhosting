@@ -1,3 +1,20 @@
+# == Class: uhosting::profiles::mariadb
+#
+# Installs and manages MariaDB server
+# It also creates databases, users, and grants coming from site hash.
+#
+# === Parameters
+#
+# [*root_password*]
+#   Database root password. Mandatory.
+#
+# === Authors
+#
+# Tobias Brunner <tobias.brunner@vshn.ch>
+#
+# === Copyright
+#
+# Copyright 2015 Tobias Brunner, VSHN AG
 #
 class uhosting::profiles::mariadb (
   $root_password,

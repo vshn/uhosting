@@ -1,3 +1,19 @@
+# == Define: uhosting::resources::site
+#
+# Creates sites (vhost, app server).
+#
+# === Parameters
+#
+# [*data*]
+#   Hash of site paramerters. For a detailed description see README.
+#
+# === Authors
+#
+# Tobias Brunner <tobias.brunner@vshn.ch>
+#
+# === Copyright
+#
+# Copyright 2015 Tobias Brunner, VSHN AG
 #
 define uhosting::resources::site (
   $data,

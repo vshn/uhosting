@@ -1,25 +1,26 @@
 # == Class: uhosting
 #
-# Full description of class uhosting here.
+# This is the main class of uhosting.
+# It is used to generate sites and includes the needed classes.
 #
 # === Parameters
 #
-# [*sample_parameter*]
-#   Explanation of what this parameter affects and what it defaults to.
+# [*sites*]
+#   Hash of sites. See README for details.
 #
-# === Examples
+# [*redirects*]
+#   Hash of redirects. See README for details.
 #
-#  class { 'uhosting':
-#    sample_parameter => 'sample value',
-#  }
+# [*dns_zones*]
+#   Hash of DNS zones. See README for details.
 #
 # === Authors
 #
-# tobru
+# Tobias Brunner <tobias.brunner@vshn.ch>
 #
 # === Copyright
 #
-# Copyright 2015 tobru
+# Copyright 2015 Tobias Brunner, VSHN AG
 #
 class uhosting (
   $sites,
