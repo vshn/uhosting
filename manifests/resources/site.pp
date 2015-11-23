@@ -5,7 +5,7 @@
 # === Parameters
 #
 # [*data*]
-#   Hash of site paramerters. For a detailed description see README.
+#   Hash of site parameters. For a detailed description see README.
 #
 # === Authors
 #
