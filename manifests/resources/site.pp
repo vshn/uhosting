@@ -208,6 +208,10 @@ define uhosting::resources::site (
   ## Use a pre-defined app configuration if an app is defined
   ## else allow custom configuration of the site definition
 
+  if ($sitedata['app']) and ($sitedata['stack_type']) {
+    fail('app and stack_type cannot be used together')
+  }
+
   if $sitedata['app'] != '' {
     $_app = $sitedata['app']
     if $sitedata['app_settings'] {
