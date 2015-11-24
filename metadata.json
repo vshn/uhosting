@@ -1,16 +1,46 @@
 {
-  "name": "tobru-uhosting",
+  "name": "vshn-uhosting",
   "version": "0.1.0",
-  "author": "tobru",
+  "author": "vshn",
   "summary": "Simple Webhosting made easy",
   "license": "BSD-3-Clause",
-  "source": "https://github.com/tobru/puppet-uhosting",
-  "project_page": "https://github.com/tobru/puppet-uhosting",
-  "issues_url": "https://github.com/tobru/puppet-uhosting/issues",
+  "source": "https://github.com/vshn/uhosting",
+  "project_page": "https://github.com/vshn/uhosting",
+  "issues_url": "https://github.com/vshn/uhosting/issues",
+  "tags": [
+    "webhosting",
+    "nginx",
+    "uwsgi",
+    "php",
+    "ruby",
+    "python"
+  ],
   "dependencies": [
     {
-      "name": "puppetlabs-stdlib",
-      "version_requirement": ">= 1.0.0"
+      "name": "puppetlabs/stdlib",
+      "version_requirement": "4.x"
+    },
+    {
+      "name": "puppetlabs/apt",
+      "version_requirement": ">=2.1.0 <3.0.0"
+    }
+  ],
+  "operatingsystem_support": [
+    {
+      "operatingsystem": "Ubuntu",
+      "operatingsystemrelease": [
+        "14.04"
+      ]
+    }
+  ],
+  "requirements": [
+    {
+      "name": "pe",
+      "version_requirement": ">=3.7.0 <5.0.0"
+    },
+    {
+      "name": "puppet",
+      "version_requirement": ">=3.7.0 <5.0.0"
     }
   ]
 }
