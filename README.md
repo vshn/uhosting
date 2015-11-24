@@ -8,7 +8,19 @@
     * [Beginning with uhosting](#beginning-with-uhosting)
 1. [Usage - Configuration options and additional functionality](#usage)
 1. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
+    * [Parameters for uhosting::sites](#parameters-for-uhostingsites)
+    * [SSL Configuration](#ssl-configuration)
+    * [Environment Variables](#environment-variables)
+    * [Redirects](#redirects)
+    * [DNS Server](#dns-server)
+1. [App Profiles](#app-profiles)
+1. [Stack Types](#stack-types)
+    * [Stack type static](#stack-type-static)
+    * [Stack type uwsgi](#stack-type-uwsgi)
+    * [Stack type phpfpm](#stack-type-phpfpm)
+1. [Vagrant specials](#vagrant-specials)
 1. [Limitations - OS compatibility, etc.](#limitations)
+1. [Development](#development)
 
 ## Overview
 
@@ -118,12 +130,15 @@ Choose between `stack_type` and `app`, both cannot be used!
 * x **vhost_params** (hash): Parameters for the `nginx::resource::vhost` type. Can be used to add additional settings or overwrite the defaults
 * x **webroot** (path): Webroot of the site. Default: `/var/www/${name}/public_html`
 
-## SSL Configuration
+The parameters `vhost_params` and `vhost_locations` are used to pass data to the according defined type of the [jfryman/nginx](https://forge.puppetlabs.com/jfryman/nginx)
+Puppet module. Have a look at this modules documentation to get to know more about how it works.
+
+### SSL Configuration
 
 Together with defining an `ssl_cert` SSL gets activated on the vhost. It uses modern SSL ciphers, disables old SSL versions and
 adds a HSTS header.
 
-## Environment Variables
+### Environment Variables
 
 Environment variables are set in the uWSGI configuration and as shell variables for the particular vhost/site user. By default
 the following variables are set:
@@ -136,6 +151,31 @@ the following variables are set:
 * **DB_HOST**
 
 Adding new variables can be done using the `env_vars` (hash) parameter of the site.
+
+### Redirects
+
+The hash `uhosting::redirects` can contain a hash of domain redirects. Example (hiera):
+
+```
+uhosting::redirects:
+  mydestination.ch:
+    - 'alternativedomain1.com'
+    - 'alternativedomain2.com'
+    - 'alternativedomain3.com'
+    - 'alternativedomain4.com'
+```
+
+These redirects are written into `/etc/nginx/redirects.conf` which gets included into the
+Nginx configuration. A redirect is done using 301 redirects directly in Nginx.
+
+### DNS Server
+
+This module supports Knot as a DNS server and brings some helpers for using it:
+
+* **uhosting::dns_zones**: Hash of DNS zones
+* **uhosting::dns_zone_defaults**: Passed directly to [Knot](https://github.com/tobru/puppet-knot) Puppet module
+* **uhosting::dns_zone_keys**: Passed directly to [Knot](https://github.com/tobru/puppet-knot) Puppet module
+* **uhosting::dns_zone_remotes**: Passed directly to [Knot](https://github.com/tobru/puppet-knot) Puppet module
 
 ## App Profiles
 
@@ -210,31 +250,6 @@ Settings can be influenced by the following site parameters:
 * **php_admin_flags**
 * **php_admin_values**
 
-## Redirects
-
-The hash `uhosting::redirects` can contain a hash of domain redirects. Example (hiera):
-
-```
-uhosting::redirects:
-  mydestination.ch:
-    - 'alternativedomain1.com'
-    - 'alternativedomain2.com'
-    - 'alternativedomain3.com'
-    - 'alternativedomain4.com'
-```
-
-These redirects are written into `/etc/nginx/redirects.conf` which gets included into the
-Nginx configuration. A redirect is done using 301 redirects directly in Nginx.
-
-## DNS Server
-
-This module supports Knot as a DNS server and brings some helpers for using it:
-
-* **uhosting::dns_zones**: Hash of DNS zones
-* **uhosting::dns_zone_defaults**: Passed directly to [Knot](https://github.com/tobru/puppet-knot) Puppet module
-* **uhosting::dns_zone_keys**: Passed directly to [Knot](https://github.com/tobru/puppet-knot) Puppet module
-* **uhosting::dns_zone_remotes**: Passed directly to [Knot](https://github.com/tobru/puppet-knot) Puppet module
-
 ## Vagrant specials
 
 The module contains a specific `Vagrantfile` to have a local testing environment
@@ -254,6 +269,109 @@ in your local browser.
 
 Running Puppet again in the VM is done by callling the script `/vagrant/vagrant/runpuppet.sh`
 inside the VM as root.
+
+## Examples
+
+Here are some Hiera examples:
+
+### Example 1: Plain static vhost
+
+```
+uhosting::sites:
+  mystatic_net:
+    server_names:
+      - 'mystatic.net'
+    ssl_cert: '/etc/ssl/certs/mystatic.net.pem'
+    ssl_key: '/etc/ssl/private/mystatic.net.key'
+    ssl_rewrite_to_https: false
+    stack_type: 'static'
+```
+
+### Example 2: App profile ownCloud
+
+```
+uhosting::sites:
+  myowncloud:
+    server_names:
+      - 'mycloud.domain.net'
+    app: 'owncloud'
+    app_settings:
+      manage_package: true
+      package_version: '8.2.1-1.1'
+    database: 'mariadb'
+    db_password: 'really-secure-password'
+```
+
+### Example 3: Custom PHP configuration
+
+```
+uhosting::sites:
+  mycustomphpapp_net:
+    server_names:
+      - 'phpapp.domain.net'
+    stack_type: 'uwsgi'
+    uwsgi_plugin: 'php'
+    database: 'mariadb'
+    db_password: 'really-secure-password'
+    vhost_params:
+      use_default_location: false
+      www_root: '/var/www/mycustomphpapp_net/public_html/public'
+    vhost_locations:
+      root:
+        location: '/'
+        location_custom_cfg:
+          try_files:
+            - '$uri $uri/ /index.php?$query_string'
+      php:
+        location: '~ \.php$'
+        include:
+          - 'uwsgi_params'
+        location_custom_cfg:
+          uwsgi_modifier1: 14
+          uwsgi_param: 'HTTPS on'
+          uwsgi_pass: 'unix:/var/lib/uhosting/mycustomphpapp_net.socket'
+    uwsgi_params:
+      php-docroot: ''
+      chdir: '/var/www/mycustomphpapp_net/public_html'
+```
+
+### Example 4: Custom Python application
+
+```
+uhosting::sites:
+  python_app:
+    server_names:
+      - 'pythonapp.domain.tld'
+    server_names_extra:
+      - '*.pythonapp.domain.tld'
+    stack_type: 'uwsgi'
+    uwsgi_plugin: 'python'
+    database: 'mariadb'
+    db_password: 'really-secure-password'
+    uwsgi_params:
+      virtualenv: '/var/www/python_app/virtualenv'
+      wsgi-file: '/var/www/python_app/wsgiapp.py'
+    pip_packages:
+      setuptools: {}
+    webroot: '/var/www/python_app/public_html'
+```
+
+### Example 5: Custom Ruby application
+
+```
+uhosting::sites:
+  ruby_app:
+    server_names:
+      - 'rubyapp.domain.tld'
+    stack_type: 'uwsgi'
+    uwsgi_plugin: 'ruby'
+    database: 'mariadb'
+    db_password: 'really-secure-password'
+    rack: '/var/www/ruby_app/app/config.ru'
+    webroot: '/var/www/ruby_app/app/public'
+    env_vars:
+      RAILS_ENV: 'production'
+```
 
 ## Limitations
 
