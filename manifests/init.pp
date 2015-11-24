@@ -14,6 +14,9 @@
 # [*dns_zones*]
 #   Hash of DNS zones. See README for details.
 #
+# [*certificates*]
+#   Hash of certificate data. See README for details.
+#
 # === Authors
 #
 # Tobias Brunner <tobias.brunner@vshn.ch>
@@ -26,16 +29,33 @@ class uhosting (
   $sites,
   $redirects = undef,
   $dns_zones = undef,
+  $certificates = undef,
 ) {
 
+  ## Validate mandatory parameters
+
   validate_hash($sites)
+
+  ## Manage DNS if there are DNS zone defined
 
   if $dns_zones {
     validate_hash($dns_zones)
     include uhosting::profiles::knot
   }
 
-  # create site resources
+  ## Create SSL certificate and key files if there are any defined
+
+  if $certificates {
+    validate_hash($certificates)
+    ensure_packages('ssl-cert')
+    $cert_names = keys($certificates)
+    ::uhosting::resources::certificates { $cert_names:
+      data => $certificates,
+    }
+  }
+
+  ## Create Sites
+
   $site_names = keys($sites)
   ::uhosting::resources::site { $site_names:
     data => $sites,

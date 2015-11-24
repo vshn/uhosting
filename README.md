@@ -138,6 +138,28 @@ Puppet module. Have a look at this modules documentation to get to know more abo
 Together with defining an `ssl_cert` SSL gets activated on the vhost. It uses modern SSL ciphers, disables old SSL versions and
 adds a HSTS header.
 
+To deliver an SSL certificate the `uhosting::certificates` hash can be filled. This is a small helper
+to create the needed files ready to be consumed by Nginx. Filling the hash does not automatically add
+the settings to the vhost, settings `ssl_cert` and `ssl_key` is still needed. Files are saved under:
+
+* certificate: `/etc/ssl/certs/${name}.pem`
+* key: `/etc/ssl/private/${name}.pem"`
+
+Example:
+
+```
+uhosting::certificates:
+  mysite_ch:
+    certificate: |
+      -----BEGIN CERTIFICATE-----
+      [...]
+      -----END CERTIFICATE-----
+    key: |
+      -----BEGIN PRIVATE KEY-----
+      [...]
+      -----END PRIVATE KEY-----
+```
+
 ### Environment Variables
 
 Environment variables are set in the uWSGI configuration and as shell variables for the particular vhost/site user. By default
