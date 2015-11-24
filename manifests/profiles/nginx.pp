@@ -67,6 +67,12 @@ class uhosting::profiles::nginx (
     configtest_enable => true,
   }
 
+  ## Generate unique DH params for this server
+  exec { 'generate_dhparams':
+    command => '/usr/bin/openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048',
+    creates => '/etc/ssl/certs/dhparam.pem',
+  }
+
   ## Firewall settings
   firewall {
     '020 open HTTP and HTTPS IPv4':
