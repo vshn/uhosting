@@ -228,7 +228,7 @@ define uhosting::resources::site (
     fail('app and stack_type cannot be used together')
   }
 
-  if $sitedata['app'] != '' {
+  if $sitedata['app'] {
     $_app = $sitedata['app']
     if $sitedata['app_settings'] {
       validate_hash($sitedata['app_settings'])
