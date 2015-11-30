@@ -14,8 +14,8 @@ define uhosting::resources::certificates (
   $data,
 ) {
 
-  $_certificate = $data['certificate']
-  $_key = $data['key']
+  $_certificate = $data[$name]['certificate']
+  $_key = $data[$name]['key']
 
   file { "/etc/ssl/certs/${name}.pem":
     ensure  => file,
