@@ -47,10 +47,11 @@ class uhosting (
 
   if $certificates {
     validate_hash($certificates)
-    ensure_packages('ssl-cert')
     $cert_names = keys($certificates)
+    ensure_packages('ssl-cert')
     ::uhosting::resources::certificates { $cert_names:
-      data => $certificates,
+      data    => $certificates,
+      require => Package['ssl-cert'],
     }
   }
 
