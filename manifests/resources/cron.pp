@@ -18,7 +18,7 @@ define uhosting::resources::cron (
   $_cronjob = { "$name" => $data[$name] }
   $_defaults = { user => $user }
 
-  if $_data[$name]['user'] {
+  if $data[$name]['user'] {
     fail("YOU ARE NOT ALLOWED TO SET THE CRON USER. RESOURCE ${name}")
   } else {
     create_resources('cron',$_cronjob,$_defaults)
