@@ -457,15 +457,17 @@ define uhosting::resources::site (
   ### Database definition
   #############################################################################
 
-  case $sitedata['database'] {
-    'mariadb': {
-      include uhosting::profiles::mariadb
-    }
-    'postgresql': {
-      include uhosting::profiles::postgresql
-    }
-    default: {
-      fail("Database type ${$sitedata['database']} unknown!")
+  if $sitedata['database'] {
+    case $sitedata['database'] {
+      'mariadb': {
+        include uhosting::profiles::mariadb
+      }
+      'postgresql': {
+        include uhosting::profiles::postgresql
+      }
+      default: {
+        fail("Database type ${$sitedata['database']} unknown!")
+      }
     }
   }
 
