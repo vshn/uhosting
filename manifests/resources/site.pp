@@ -482,6 +482,6 @@ define uhosting::resources::site (
     $_cron_user = {
       user => $name,
     }
-    create_resource('cron',merge($sitedata['crons'],$_cron_user))
+    create_resources('cron',merge($sitedata['crons'],$_cron_user))
   }
 }
