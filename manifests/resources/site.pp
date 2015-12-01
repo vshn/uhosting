@@ -471,4 +471,17 @@ define uhosting::resources::site (
     }
   }
 
+  #############################################################################
+  ### Site cron definition
+  #############################################################################
+
+  if $sitedata['crons'] {
+    validate_hash($sitedata['crons'])
+    # do not allow to override user, therefore we merge the hash and override
+    # the user parameter
+    $_cron_user = {
+      user => $name,
+    }
+    create_resource('cron',merge($sitedata['crons'],$_cron_user))
+  }
 }

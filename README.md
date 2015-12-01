@@ -111,6 +111,7 @@ Choose between `stack_type` and `app`, both cannot be used!
   If the stack type is `uwsgi`, the parameter `uwsgi_plugin` needs to be configured too
 * **app** (string): Name of an app profile to use. If this parameter is set, some of the other parameters have no affect.
 * **app_settings** (hash of strings): Application specific parameters used in the app profile. See header of the corresponding manifest for a parameter description.
+* **crons** (hash of strings): Cronjobs to run as the site user. For parameters see [cron](https://docs.puppetlabs.com/references/latest/type.html#cron). The username is enforced!
 * **database** (string): Type of database to manage for this site
 * **db_name** (string): If not set, the db name will be the same as the key
 * **db_password** (string): Plain text password to set for this site
