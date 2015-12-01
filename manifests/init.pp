@@ -30,6 +30,7 @@ class uhosting (
   $redirects = undef,
   $dns_zones = undef,
   $certificates = undef,
+  $sshlogin_group = 'sshlogin',
 ) {
 
   ## Validate mandatory parameters

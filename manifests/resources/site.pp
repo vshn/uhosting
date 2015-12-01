@@ -73,7 +73,7 @@ define uhosting::resources::site (
 
   if $sitedata['ssh_keys'] {
     validate_hash($sitedata['ssh_keys'])
-    $_groups = [ 'www-data', 'sshlogin' ]
+    $_groups = [ 'www-data', $::uhosting::sshlogin_group ]
   } else {
     $_groups = [ 'www-data' ]
   }
