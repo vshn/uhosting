@@ -477,11 +477,11 @@ define uhosting::resources::site (
 
   if $sitedata['crons'] {
     validate_hash($sitedata['crons'])
-    # do not allow to override user, therefore we merge the hash and override
-    # the user parameter
-    $_cron_user = {
+    # as we do not allow to override the user, we need a helper
+    $_crons = keys($sitedata['crons'])
+    ::uhosting::resources::cron { $_crons:
+      data => $sitedata['crons'],
       user => $name,
     }
-    create_resources('cron',merge($sitedata['crons'],$_cron_user))
   }
 }
