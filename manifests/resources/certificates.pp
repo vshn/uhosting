@@ -23,6 +23,7 @@ define uhosting::resources::certificates (
     owner   => 'root',
     group   => 'root',
     mode    => '0644',
+    notify  => Class['::nginx::service'],
   }
   file { "/etc/ssl/private/${name}.pem":
     ensure  => file,
@@ -30,6 +31,7 @@ define uhosting::resources::certificates (
     owner   => 'root',
     group   => 'ssl-cert',
     mode    => '0640',
+    notify  => Class['::nginx::service'],
   }
 
 }
