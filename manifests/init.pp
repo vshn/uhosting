@@ -63,4 +63,13 @@ class uhosting (
     data => $sites,
   }
 
+  ## System preparation
+  # create directory for the uwsgi/fpm sockets
+  file { '/var/lib/uhosting':
+    ensure => directory,
+    owner  => 'www-data',
+    group  => 'www-data',
+    mode   => '0775',
+  }
+
 }

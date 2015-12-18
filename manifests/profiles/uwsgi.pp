@@ -35,14 +35,6 @@ class uhosting::profiles::uwsgi {
     enable => true,
   }
 
-  # create directory for the uwsgi sockets
-  file { '/var/lib/uhosting':
-    ensure => directory,
-    owner  => 'www-data',
-    group  => 'www-data',
-    mode   => '0775',
-  }
-
   # a world accessible spooler dir
   file { '/var/spool/uwsgi':
     ensure => directory,
