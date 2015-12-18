@@ -361,8 +361,18 @@ define uhosting::resources::site (
         $fpm_socket = "${socket_path}/php5-fpm-${name}.sock"
         $vhost_defaults = {
           index_files => [ 'index.php' ],
-          try_files   => [ '$uri', '$uri/', '/index.php', '/index.html', '=404' ],
-          fastcgi     => "unix:${fpm_socket}",
+          try_files   => [ '$uri', '$uri/', '=404' ],
+        }
+        # Nginx Locations
+        nginx::resource::location { 'default_php':
+          location           => '~ [^/]\.php(/|$)',
+          www_root           => $webroot,
+          try_files          => [ '$uri', '=404' ],
+          fastcgi            => "unix:${fpm_socket}",
+          fastcgi_split_path => '^(.+?\.php)(/.*)$',
+          fastcgi_param      => {
+            'SCRIPT_FILENAME' => '$document_root$fastcgi_script_name',
+          },
         }
         # PHP-FPM pool
         $default_php_flags = {
