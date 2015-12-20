@@ -98,6 +98,7 @@ define uhosting::app::wordpress (
     www_root             => $_webroot,
     index_files          => [ 'index.php' ],
     try_files            => [ '$uri', '$uri/', '=404' ],
+    client_max_body_size => '100m',
   }
   $vhost_params = merge($vhost_defaults,$_app_vhost_params)
   $vhost_resource = { "${name}-wordpress" => $vhost_params }
