@@ -62,7 +62,7 @@ define uhosting::app::wordpress (
 
   # PHP-FPM pool
   $_php_values = {
-    'php_post_max_size' => '100M',
+    'post_max_size' => '100M',
     'upload_max_filesize' => '100M',
   }
   $fpm_pm = 'ondemand'
