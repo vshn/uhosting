@@ -64,6 +64,7 @@ define uhosting::app::wordpress (
   $_php_values = {
     'post_max_size' => '100M',
     'upload_max_filesize' => '100M',
+    'memory_limit' => '64M',
   }
   $fpm_pm = 'ondemand'
   $fpm_listen_backlog = '65535'
