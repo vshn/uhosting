@@ -61,6 +61,10 @@ define uhosting::app::wordpress (
   $fpm_socket = "/var/lib/uhosting/php5-fpm-${name}.sock"
 
   # PHP-FPM pool
+  $_php_values = {
+    'php_post_max_size' => '100M',
+    'upload_max_filesize' => '100M',
+  }
   $fpm_pm = 'ondemand'
   $fpm_listen_backlog = '65535'
   $fpm_max_children = 10
@@ -80,7 +84,7 @@ define uhosting::app::wordpress (
     #php_admin_values         => $_php_admin_values,
     #php_admin_flags          => $_php_admin_flags,
     #php_flags                => $_php_flags,
-    #php_values               => $_php_values,
+    php_values               => $_php_values,
     #env_variables            => $_env_vars,
     require                  => Class['uhosting::profiles::php'],
   }
