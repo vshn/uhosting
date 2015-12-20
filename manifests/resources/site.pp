@@ -104,6 +104,19 @@ define uhosting::resources::site (
     $uwsgi_params = $sitedata['uwsgi_params']
   }
 
+  ## Validate and prepare database settings
+
+  if $sitedata['db_user'] {
+    $db_user = $sitedata['db_user']
+  } else {
+    $db_user = $name
+  }
+  if $sitedata['db_name'] {
+    $db_name = $sitedata['db_name']
+  } else {
+    $db_name = $name
+  }
+
   ## Validate and prepare environment variables
 
   if $sitedata['env_vars'] {
@@ -119,19 +132,6 @@ define uhosting::resources::site (
     'db_host' => 'localhost',
   }
   $_env_vars = merge($default_env_vars,$env_vars)
-
-  ## Validate and prepare database settings
-
-  if $sitedata['db_user'] {
-    $db_user = $sitedata['db_user']
-  } else {
-    $db_user = $name
-  }
-  if $sitedata['db_name'] {
-    $db_name = $sitedata['db_name']
-  } else {
-    $db_name = $name
-  }
 
   # system packages
   # TODO: really needed?
