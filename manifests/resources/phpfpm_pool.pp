@@ -27,6 +27,7 @@ define uhosting::resources::phpfpm_pool (
   $php_admin_flags = undef,
   $php_flags = undef,
   $php_values = undef,
+  $php_version = '5.5',
   $env_variables = undef,
 ) {
 
@@ -37,7 +38,25 @@ define uhosting::resources::phpfpm_pool (
   if $php_values { validate_hash($php_values) }
   if $env_variables { validate_hash($env_variables) }
 
-  $master_config_file = "/etc/php5/fpm/${name}.conf"
+  case $php_version {
+    '5.4': {
+      $_fpm_binary = '/usr/sbin/php5-fpm'
+      $_master_config_file = "/etc/php5/fpm/${name}.conf"
+    }
+    '5.5': {
+      $_fpm_binary = '/usr/sbin/php5-fpm'
+      $_master_config_file = "/etc/php5/fpm/${name}.conf"
+    }
+    '5.6': {
+      $_fpm_binary = '/usr/sbin/php5-fpm'
+      $_master_config_file = "/etc/php5/fpm/${name}.conf"
+    }
+    '7.0': {
+      $_fpm_binary = '/usr/sbin/php-fpm7.0'
+      $_master_config_file = "/etc/php/7.0/fpm/${name}.conf"
+    }
+  }
+
   $ensure_process = $ensure ? {
     'present' => 'running',
     'absent'  => 'removed',
@@ -46,18 +65,18 @@ define uhosting::resources::phpfpm_pool (
 
   # write the pool specific configuration file
   # pm selection is done in the template
-  file { $master_config_file:
+  file { $_master_config_file:
     ensure  => $ensure,
     content => template('uhosting/phpfpm_pool.conf.erb'),
     mode    => '0600',
-    notify  => Supervisord::Supervisorctl["restart_php5-fpm-${name}"],
+    notify  => Supervisord::Supervisorctl["restart_php-fpm-${name}"],
   }
 
   # add the new php fpm master / pool to supervisor
-  ::supervisord::program { "php5-fpm-${name}":
+  ::supervisord::program { "php-fpm-${name}":
     ensure                  => $ensure,
     ensure_process          => $ensure_process,
-    command                 => "/usr/sbin/php5-fpm --fpm-config ${master_config_file}",
+    command                 => "${_fpm_binary} --fpm-config ${_master_config_file}",
     user                    => 'root',
     autorestart             => true,
     autostart               => true,
@@ -69,11 +88,11 @@ define uhosting::resources::phpfpm_pool (
     stdout_logfile_backups  => '7',
     stdout_logfile_maxbytes => '10MB',
     stopsignal              => 'QUIT',
-    subscribe               => File[$master_config_file],
+    subscribe               => File[$_master_config_file],
   }
-  ::supervisord::supervisorctl { "restart_php5-fpm-${name}":
+  ::supervisord::supervisorctl { "restart_php-fpm-${name}":
     command     => 'restart',
-    process     => "php5-fpm-${name}",
+    process     => "php-fpm-${name}",
     refreshonly => true,
   }
 

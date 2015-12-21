@@ -418,7 +418,7 @@ define uhosting::resources::site (
         $fpm_max_spare_servers    = 35
         $fpm_max_requests         = 0 # no respawning
         $fpm_process_idle_timeout = undef
-        phpfpm_pool { $name:
+        uhosting::resources::phpfpm_pool { $name:
           ensure                   => $ensure,
           fpm_pm                   => $fpm_pm,
           fpm_socket               => $fpm_socket,
@@ -433,6 +433,7 @@ define uhosting::resources::site (
           php_admin_flags          => $_php_admin_flags,
           php_flags                => $_php_flags,
           php_values               => $_php_values,
+          php_version              => $::uhosting::profiles::php::php_version,
           env_variables            => $_env_vars,
           require                  => Class['uhosting::profiles::php'],
         }
