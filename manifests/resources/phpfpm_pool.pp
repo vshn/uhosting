@@ -89,6 +89,7 @@ define uhosting::resources::phpfpm_pool (
     stdout_logfile_maxbytes => '10MB',
     stopsignal              => 'QUIT',
     subscribe               => File[$_master_config_file],
+    require                 => Class['::php::fpm'],
   }
   ::supervisord::supervisorctl { "restart_php-fpm-${name}":
     command     => 'restart',

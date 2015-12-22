@@ -35,12 +35,14 @@ class uhosting::profiles::php (
     $ext_tool_query = '/usr/sbin/phpquery'
     $package_prefix = 'php7.0-'
     $fpm_service_name = 'php7.0-fpm'
+    $cfg_root = '/etc/php/7.0'
   } else {
     $config_root_ini = undef
     $ext_tool_enable = undef
     $ext_tool_query = undef
     $package_prefix = undef
     $fpm_service_name = undef
+    $cfg_root = undef
   }
 
   apt::source { 'sury_php_ppa':
@@ -57,9 +59,12 @@ class uhosting::profiles::php (
       'deb' => true,
     },
   } ->
+  class { '::php::params':
+    cfg_root => $cfg_root,
+  } ->
   class { '::php':
     manage_repos    => false,
-    fpm             => false,
+    fpm             => true,
     dev             => true,
     composer        => true,
     pear            => true,
@@ -69,16 +74,13 @@ class uhosting::profiles::php (
     ext_tool_query  => $ext_tool_query,
     package_prefix  => $package_prefix,
     extensions      => {
-      #'imagick'     => { 'provider'      => 'apt' },
-      #'gmp'         => { 'provider'      => 'apt' },
-      'mcrypt'      => { 'provider'      => 'apt' },
-      'json'        => { 'provider'      => 'apt' },
-      #'mysqlnd'     => { 'provider'      => 'apt' },
+      #'imagick'     => { 'provider' => 'apt' },
+      #'gmp'         => { 'provider' => 'apt' },
+      #'mcrypt'      => { 'provider' => 'apt' },
+      #'json'        => { 'provider' => 'apt' },
+      #'mysqlnd'     => { 'provider' => 'apt' },
     },
     require         => Exec['apt_update'],
-  } ->
-  class { '::php::fpm':
-    pools => {},
   }
   Service <| tag == 'php5-fpm' |> {
     name   => $fpm_service_name,
