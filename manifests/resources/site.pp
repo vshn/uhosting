@@ -435,7 +435,7 @@ define uhosting::resources::site (
           php_values               => $_php_values,
           php_version              => $::uhosting::profiles::php::php_version,
           env_variables            => $_env_vars,
-          require                  => Class['uhosting::profiles::php'],
+          require                  => Class['::php'],
         }
       }
       default: {
