@@ -364,7 +364,7 @@ define uhosting::resources::site (
           try_files   => [ '$uri', '$uri/', '=404' ],
         }
         # Nginx Locations
-        nginx::resource::location { 'default_php':
+        nginx::resource::location { "${name}_default_php":
           vhost              => $name,
           ssl                => $ssl,
           location           => '~ [^/]\.php(/|$)',
