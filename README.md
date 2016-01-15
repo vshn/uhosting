@@ -18,6 +18,7 @@
     * [Stack type static](#stack-type-static)
     * [Stack type uwsgi](#stack-type-uwsgi)
     * [Stack type phpfpm](#stack-type-phpfpm)
+    * [Stack type nodejs](#stack-type-nodejs)
 1. [Vagrant specials](#vagrant-specials)
 1. [Limitations - OS compatibility, etc.](#limitations)
 1. [Development](#development)
@@ -283,9 +284,10 @@ By default, nginx is set up such that all requests are proxied directly to this 
 Parameters:
 
 * **nodejs_version**: NodeJS version for this vhost, format "v4.2.1", "stable" or 
-  "latest" (the last two update NodeJS automatically!). Default is "stable". 
-* **nodejs_packages**: Array of packages to be installed on this vhost. Either a package 
-  or package@version.
+  "latest" (the latter two update NodeJS automatically and are thus not recommended for production). 
+  Default is "stable". 
+* **nodejs_packages**: Array of packages to be installed on this vhost. Either <package> 
+  or <package>@<version>.
 * **nodejs_port**: Port number for nginx to connect to. Required, unless **nodejs_disable_vhost** is true.
 * **nodejs_disable_vhost**: Run NodeJS without nginx vhost. Default is false.
 
