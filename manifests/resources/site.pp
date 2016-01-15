@@ -455,20 +455,20 @@ define uhosting::resources::site (
         }
         file { "${homedir}/nodejs":
           ensure => directory,
-          owner  => $name,
           group  => $name,
+          owner  => $name,
         }
         if $sitedata['nodejs_packages'] {
           $_packages = prefix($sitedata['nodejs_packages'], "${name}-")
           uhosting::resources::nodejs_package { $_packages:
-            user    => $name,
             homedir => $homedir,
+            user    => $name,
           }
         }
         uhosting::resources::nodejs_worker { $name:
           ensure  => $ensure,
-          version => $nodejs_version,
           app     => $nodejs_app,
+          version => $nodejs_version,
         }
         if $sitedata['nodejs_disable_vhost'] {
           $vhost_defaults = {
@@ -480,14 +480,14 @@ define uhosting::resources::site (
           }
           validate_integer($sitedata['nodejs_port'], 65535, 1024)
           nginx::resource::location { '/':
-            vhost => $name,
             proxy => "http://127.0.0.1:${sitedata['nodejs_port']}",
-            ssl   => $ssl,
             proxy_set_header => [ 'Host $host', 
                                   'X-Real-IP $remote_addr', 
                                   'X-Forwarded-For $proxy_add_x_forwarded_for',
                                   'X-Forwarded-Proto $scheme',
-                                  'X-SSL $https' ]
+                                  'X-SSL $https' ],
+            ssl   => $ssl,
+            vhost => $name,
           }
         }
       }
