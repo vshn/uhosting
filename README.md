@@ -273,6 +273,22 @@ Settings can be influenced by the following site parameters:
 * **php_admin_flags**
 * **php_admin_values**
 
+
+### Stack type `nodejs`
+
+This type configures a NodeJS instance managed by SupervisorD.
+
+By default, nginx is set up such that all requests are proxied directly to this instance.
+
+Parameters:
+
+* **nodejs_version**: NodeJS version for this vhost, format "v4.2.1", "stable" or 
+  "latest" (the last two update NodeJS automatically!). Default is "stable". 
+* **nodejs_packages**: Array of packages to be installed on this vhost. Either a package 
+  or package@version.
+* **nodejs_port**: Port number for nginx to connect to. Required, unless **nodejs_disable_vhost** is true.
+* **nodejs_disable_vhost**: Run NodeJS without nginx vhost. Default is false.
+
 ## Vagrant specials
 
 The module contains a specific `Vagrantfile` to have a local testing environment
