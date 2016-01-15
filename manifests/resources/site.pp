@@ -363,18 +363,21 @@ define uhosting::resources::site (
           index_files => [ 'index.php' ],
           try_files   => [ '$uri', '$uri/', '=404' ],
         }
-        # Nginx Locations
-        nginx::resource::location { "${name}_default_php":
-          vhost              => $name,
-          ssl                => $ssl,
-          location           => '~ [^/]\.php(/|$)',
-          www_root           => $webroot,
-          try_files          => [ '$uri', '=404' ],
-          fastcgi            => "unix:${fpm_socket}",
-          fastcgi_split_path => '^(.+?\.php)(/.*)$',
-          fastcgi_param      => {
-            'SCRIPT_FILENAME' => '$document_root$fastcgi_script_name',
-          },
+        if ! $sitedata['vhost_params']['use_default_location'] { } else {
+          # Nginx Locations
+          nginx::resource::location { "${name}_default_php":
+            vhost              => $name,
+            ssl                => $ssl,
+            ssl_only           => $ssl,
+            location           => '~ [^/]\.php(/|$)',
+            www_root           => $webroot,
+            try_files          => [ '$uri', '=404' ],
+            fastcgi            => "unix:${fpm_socket}",
+            fastcgi_split_path => '^(.+?\.php)(/.*)$',
+            fastcgi_param      => {
+              'SCRIPT_FILENAME' => '$document_root$fastcgi_script_name',
+            },
+          }
         }
         # PHP-FPM pool
         $default_php_flags = {
