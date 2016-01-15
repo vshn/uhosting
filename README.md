@@ -288,7 +288,8 @@ Parameters:
   Default is "stable". 
 * **nodejs_packages**: Array of packages to be installed on this vhost. Either [package] 
   or [package]@[version].
-* **nodejs_port**: Port number for nginx to connect to. Required, unless **nodejs_disable_vhost** is true.
+* **nodejs_port**: Port number for nginx to connect to. The NodeJS application must listen 
+  on this port on 127.0.0.1. Required, unless **nodejs_disable_vhost** is true.
 * **nodejs_disable_vhost**: Run NodeJS without nginx vhost. Default is false.
 
 ## Vagrant specials
