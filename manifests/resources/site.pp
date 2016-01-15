@@ -441,6 +441,36 @@ define uhosting::resources::site (
           require                  => Class['::php'],
         }
       }
+      'nodejs': {
+        include uhosting::profiles::nginx
+        include uhosting::profiles::supervisord
+        include uhosting::profiles::nodejs
+        if $sitedata['nodejs_app'] {
+          $nodejs_app = $sitedata['nodejs_app']
+        } else {
+          $nodejs_app = "${homedir}/nodejs/index.js"
+        }
+        if $sitedata['nodejs_version'] {
+          $nodejs_version = $sitedata['nodejs_version']
+        }
+        file { "${homedir}/nodejs":
+          ensure => directory,
+          owner  => $name,
+          group  => $name,
+        }
+        if $sitedata['nodejs_packages'] {
+          $_packages = prefix($sitedata['nodejs_packages'], "${name}-")
+          uhosting::resources::nodejs_package { $_packages:
+            user    => $name,
+            homedir => $homedir,
+          }
+        }
+        uhosting::resources::nodejs_worker { $name:
+          ensure  => $ensure,
+          version => $nodejs_version,
+          app     => $nodejs_app,
+        }
+      }
       default: {
         fail("STACKTYPE UNKNOWN")
       }
