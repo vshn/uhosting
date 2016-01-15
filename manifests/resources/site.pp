@@ -467,6 +467,26 @@ define uhosting::resources::site (
           version => $nodejs_version,
           app     => $nodejs_app,
         }
+        if $sitedata['nodejs_disable_vhost'] {
+          $vhost_defaults = {
+            ensure => absent,
+          }
+        } else {
+          $vhost_defaults = {
+            use_default_location  => false,
+          }
+          validate_integer($sitedata['nodejs_port'], 65535, 1024)
+          nginx::resource::location { '/':
+            vhost => $name,
+            proxy => "http://127.0.0.1:${sitedata['nodejs_port']}",
+            ssl   => $ssl,
+            proxy_set_header => [ 'Host $host', 
+                                  'X-Real-IP $remote_addr', 
+                                  'X-Forwarded-For $proxy_add_x_forwarded_for',
+                                  'X-Forwarded-Proto $scheme',
+                                  'X-SSL $https' ]
+          }
+        }
       }
       default: {
         fail("STACKTYPE UNKNOWN")
