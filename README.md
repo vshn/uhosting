@@ -286,8 +286,8 @@ Parameters:
 * **nodejs_version**: NodeJS version for this vhost, format "v4.2.1", "stable" or 
   "latest" (the latter two update NodeJS automatically and are thus not recommended for production). 
   Default is "stable". 
-* **nodejs_packages**: Array of packages to be installed on this vhost. Either <package> 
-  or <package>@<version>.
+* **nodejs_packages**: Array of packages to be installed on this vhost. Either [package] 
+  or [package]@[version].
 * **nodejs_port**: Port number for nginx to connect to. Required, unless **nodejs_disable_vhost** is true.
 * **nodejs_disable_vhost**: Run NodeJS without nginx vhost. Default is false.
 
