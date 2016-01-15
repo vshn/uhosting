@@ -13,9 +13,9 @@
 # Copyright 2015 David Gubler, VSHN AG
 #
 define uhosting::resources::nodejs_worker (
+  $app,
   $ensure = present,
   $version = undef,
-  $app,
 ) {
   validate_absolute_path($app)
   
@@ -32,17 +32,17 @@ define uhosting::resources::nodejs_worker (
     $_command = "/usr/local/bin/node-${_version}"
   }
 
-  ensure_resource('nodejs::install', "nodejs-${_version}", { 
-    'make_install' => false, 
-    'version' => $_version
-  })
+  $_nodejs_install = {
+    'make_install'  => false, 
+    'version'       => $_version
+  }
+  ensure_resource('nodejs::install', "nodejs-${_version}", $_nodejs_install)
+
   supervisord::program { "nodejs-${name}":
-    require                 => Nodejs::Install["nodejs-${_version}"],
     ensure                  => $ensure,
-    command                 => "${_command} ${app}",
-    user                    => $name,
     autorestart             => true,
     autostart               => true,
+    command                 => "${_command} ${app}",
     redirect_stderr         => true,
     stderr_logfile          => "${name}-error.log",
     stderr_logfile_backups  => '7',
@@ -50,6 +50,8 @@ define uhosting::resources::nodejs_worker (
     stdout_logfile          => "${name}.log",
     stdout_logfile_backups  => '7',
     stdout_logfile_maxbytes => '10MB',
+    user                    => $name,
+    require                 => Nodejs::Install["nodejs-${_version}"],
   }
 }
 
