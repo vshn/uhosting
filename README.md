@@ -18,6 +18,7 @@
     * [Stack type static](#stack-type-static)
     * [Stack type uwsgi](#stack-type-uwsgi)
     * [Stack type phpfpm](#stack-type-phpfpm)
+    * [Stack type nodejs](#stack-type-nodejs)
 1. [Vagrant specials](#vagrant-specials)
 1. [Limitations - OS compatibility, etc.](#limitations)
 1. [Development](#development)
@@ -272,6 +273,31 @@ Settings can be influenced by the following site parameters:
 * **php_values**
 * **php_admin_flags**
 * **php_admin_values**
+
+
+### Stack type `nodejs`
+
+This type configures a NodeJS instance managed by SupervisorD.
+
+By default, nginx is set up such that all requests are proxied directly to this instance.
+
+To use the NodeJS stack type, the following dependencies must be fulfilled:
+* [willdurand/nodejs](https://forge.puppetlabs.com/willdurand/nodejs)
+* [maestrodev/wget](https://forge.puppetlabs.com/maestrodev/wget) (required by willdurand/nodejs)
+
+Parameters:
+
+* **nodejs_version**: NodeJS version for this vhost, format "v4.2.1", "stable" or 
+  "latest" (the latter two update NodeJS automatically and are thus not recommended for production). 
+  Default is "stable". 
+* **nodejs_packages**: Array of Node packages to be installed on this vhost. Either [package] 
+  or [package]@[version]. The packages will be installed into the `[vhost]/node_modules`
+  directory.
+* **nodejs_port**: Port number for nginx to connect to. The NodeJS application must listen 
+  on this port on 127.0.0.1. Required, unless **nodejs_disable_vhost** is true.
+* **nodejs_disable_vhost**: Run NodeJS without nginx vhost. This is useful for NodeJS
+  applications that only have a back-end function and are not directly accessed by clients.
+  Default is false.
 
 ## Vagrant specials
 

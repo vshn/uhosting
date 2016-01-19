@@ -441,6 +441,56 @@ define uhosting::resources::site (
           require                  => Class['::php'],
         }
       }
+      'nodejs': {
+        include uhosting::profiles::nginx
+        include uhosting::profiles::supervisord
+        include uhosting::profiles::nodejs
+        if $sitedata['nodejs_app'] {
+          $nodejs_app = $sitedata['nodejs_app']
+        } else {
+          $nodejs_app = "${homedir}/nodejs/index.js"
+        }
+        if $sitedata['nodejs_version'] {
+          $nodejs_version = $sitedata['nodejs_version']
+        }
+        file { "${homedir}/nodejs":
+          ensure => directory,
+          group  => $name,
+          owner  => $name,
+        }
+        if $sitedata['nodejs_packages'] {
+          $_packages = prefix($sitedata['nodejs_packages'], "${name}-")
+          uhosting::resources::nodejs_package { $_packages:
+            homedir => $homedir,
+            user    => $name,
+          }
+        }
+        uhosting::resources::nodejs_worker { $name:
+          ensure  => $ensure,
+          app     => $nodejs_app,
+          version => $nodejs_version,
+        }
+        if $sitedata['nodejs_disable_vhost'] {
+          $vhost_defaults = {
+            ensure => absent,
+          }
+        } else {
+          $vhost_defaults = {
+            use_default_location  => false,
+          }
+          validate_integer($sitedata['nodejs_port'], 65535, 1024)
+          nginx::resource::location { '/':
+            proxy => "http://127.0.0.1:${sitedata['nodejs_port']}",
+            proxy_set_header => [ 'Host $host', 
+                                  'X-Real-IP $remote_addr', 
+                                  'X-Forwarded-For $proxy_add_x_forwarded_for',
+                                  'X-Forwarded-Proto $scheme',
+                                  'X-SSL $https' ],
+            ssl   => $ssl,
+            vhost => $name,
+          }
+        }
+      }
       default: {
         fail("STACKTYPE UNKNOWN")
       }
