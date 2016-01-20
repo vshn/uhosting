@@ -69,11 +69,11 @@ define uhosting::resources::phpfpm_pool (
     ensure  => $ensure,
     content => template('uhosting/phpfpm_pool.conf.erb'),
     mode    => '0600',
-    notify  => Supervisord::Supervisorctl["restart_php-fpm-${name}"],
+    notify  => Supervisord::Supervisorctl["restart_phpfpm-${name}"],
   }
 
   # add the new php fpm master / pool to supervisor
-  ::supervisord::program { "php-fpm-${name}":
+  ::supervisord::program { "phpfpm-${name}":
     ensure                  => $ensure,
     ensure_process          => $ensure_process,
     command                 => "${_fpm_binary} --fpm-config ${_master_config_file}",
@@ -91,9 +91,14 @@ define uhosting::resources::phpfpm_pool (
     subscribe               => File[$_master_config_file],
     require                 => Class['::php::fpm'],
   }
-  ::supervisord::supervisorctl { "restart_php-fpm-${name}":
+  sudo::conf { "supervisord-manage_phpfpm-${name}":
+    content   => [  "${name} ALL=(root) NOPASSWD: /usr/bin/supervisorctl stop phpfpm-${name}",
+                    "${name} ALL=(root) NOPASSWD: /usr/bin/supervisorctl start phpfpm-${name}",
+                    "${name} ALL=(root) NOPASSWD: /usr/bin/supervisorctl restart phpfpm-${name}" ],
+  }
+  ::supervisord::supervisorctl { "restart_phpfpm-${name}":
     command     => 'restart',
-    process     => "php-fpm-${name}",
+    process     => "phpfpm-${name}",
     refreshonly => true,
   }
 
