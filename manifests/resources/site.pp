@@ -363,7 +363,18 @@ define uhosting::resources::site (
           index_files => [ 'index.php' ],
           try_files   => [ '$uri', '$uri/', '=404' ],
         }
-        if ! $sitedata['vhost_params']['use_default_location'] { } else {
+        if is_hash($sitedata['vhost_params']) {
+          if is_bool($sitedata['vhost_params']['use_default_location']) {
+            if $sitedata['vhost_params']['use_default_location'] {
+              $_use_default_location = true
+            } else {
+              $_use_default_location = false
+            }
+          } else {
+            $_use_default_location = true
+          }
+        }
+        if $_use_default_location {
           # Nginx Locations
           nginx::resource::location { "${name}_default_php":
             vhost              => $name,
