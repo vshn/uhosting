@@ -373,6 +373,8 @@ define uhosting::resources::site (
           } else {
             $_use_default_location = true
           }
+        } else {
+          $_use_default_location = true
         }
         if $_use_default_location {
           # Nginx Locations
