@@ -446,12 +446,12 @@ define uhosting::resources::site (
         include uhosting::profiles::supervisord
         include uhosting::profiles::nodejs
         if $sitedata['nodejs_app'] {
-          $nodejs_app = $sitedata['nodejs_app']
+          $_nodejs_app = $sitedata['nodejs_app']
         } else {
-          $nodejs_app = "${homedir}/nodejs/index.js"
+          $_nodejs_app = "${homedir}/nodejs/index.js"
         }
         if $sitedata['nodejs_version'] {
-          $nodejs_version = $sitedata['nodejs_version']
+          $_nodejs_version = $sitedata['nodejs_version']
         }
         file { "${homedir}/nodejs":
           ensure => directory,
@@ -467,8 +467,8 @@ define uhosting::resources::site (
         }
         uhosting::resources::nodejs_worker { $name:
           ensure  => $ensure,
-          app     => $nodejs_app,
-          version => $nodejs_version,
+          app     => $_nodejs_app,
+          version => $_nodejs_version,
         }
         if $sitedata['nodejs_disable_vhost'] {
           $vhost_defaults = {
