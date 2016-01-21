@@ -53,5 +53,10 @@ define uhosting::resources::nodejs_worker (
     user                    => $name,
     require                 => Nodejs::Install["nodejs-${_version}"],
   }
+  sudo::conf { "supervisord-manage_nodejs-${name}":
+    content   => [  "${name} ALL=(root) NOPASSWD: /usr/bin/supervisorctl stop nodejs-${name}",
+                    "${name} ALL=(root) NOPASSWD: /usr/bin/supervisorctl start nodejs-${name}",
+                    "${name} ALL=(root) NOPASSWD: /usr/bin/supervisorctl restart nodejs-${name}" ],
+  }
 }
 
