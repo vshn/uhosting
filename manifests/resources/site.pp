@@ -353,6 +353,9 @@ define uhosting::resources::site (
             fail("UWSGI PLUGIN UNKNOWN")
           }
         }
+        sudo::conf { "uwsgi_manage_${name}":
+          content   => "${name} ALL=(root) NOPASSWD: /usr/bin/touch ${vassals_dir}/${name}.ini",
+        }
       }
       'phpfpm': {
         include uhosting::profiles::nginx

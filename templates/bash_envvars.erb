@@ -2,7 +2,10 @@
 export <%= k.upcase %>="<%= v %>"
 <%- end -%>
 <% if @sitedata['stack_type'] == 'phpfpm' or @sitedata['stack_type'] == 'nodejs'  %>
-alias start='sudo supervisorctl start <%= @sitedata['stack_type'] %>-<%= @name %>'
-alias stop='sudo supervisorctl stop <%= @sitedata['stack_type'] %>-<%= @name %>'
-alias restart='sudo supervisorctl restart <%= @sitedata['stack_type'] %>-<%= @name %>'
+alias ustart='sudo supervisorctl start <%= @sitedata['stack_type'] %>-<%= @name %>'
+alias ustop='sudo supervisorctl stop <%= @sitedata['stack_type'] %>-<%= @name %>'
+alias urestart='sudo supervisorctl restart <%= @sitedata['stack_type'] %>-<%= @name %>'
+<% end %>
+<% if @sitedata['stack_type'] == 'uwsgi'  %>
+alias urestart='sudo touch <%= @vassals_dir %>/<%= @name %>.ini'
 <% end %>
