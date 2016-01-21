@@ -261,6 +261,12 @@ When using this plugin, it's possible to install PIP into a virtualenv: Just
 define the PIP packages on the `pip_packages` site parameter (hash). When specifying
 PIP packages, a virtualenv is automatically created under `${homedir}/virtualenv`.
 
+#### Maintenance
+
+The site user account can run the following command:
+
+* **urestart**: Tells uwsgi to restart this site's worker process.
+
 
 ### Stack type `phpfpm`
 
@@ -273,6 +279,15 @@ Settings can be influenced by the following site parameters:
 * **php_values**
 * **php_admin_flags**
 * **php_admin_values**
+
+#### Maintenance
+
+The site user account can run the following commands:
+
+* **ustop**: Tells supervisord to stop the php-fpm process of this site. This is not 
+  persistent: A restart of supervisord will restart the php-fpm process.
+* **ustart**: Tells supervisord to start the previously stopped php-fpm process of this site.
+* **urestart**: Tells supervisord to restart the php-fpm process of this site.
 
 
 ### Stack type `nodejs`
@@ -298,6 +313,16 @@ Parameters:
 * **nodejs_disable_vhost**: Run NodeJS without nginx vhost. This is useful for NodeJS
   applications that only have a back-end function and are not directly accessed by clients.
   Default is false.
+
+#### Maintenance
+
+The site user account can run the following commands:
+
+* **ustop**: Tells supervisord to stop the NodeJS process of this site. This is not 
+  persistent: A restart of supervisord will restart the NodeJS process.
+* **ustart**: Tells supervisord to start the previously stopped NodeJS process of this site.
+* **urestart**: Tells supervisord to restart the NodeJS process of this site.
+
 
 ## Vagrant specials
 
