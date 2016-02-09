@@ -21,6 +21,7 @@
     * [Stack type nodejs](#stack-type-nodejs)
 1. [Vagrant specials](#vagrant-specials)
 1. [Limitations - OS compatibility, etc.](#limitations)
+1. [Known Issues](#knownissues)
 1. [Development](#development)
 
 ## Overview
@@ -92,7 +93,7 @@ calling the `resources::site` type using some stdlib-fu.
 The real magic happens in the `resources::site` class where it uses the parameters found in
 `uhosting::sites` to create the needed configuration.
 
-All components are installed only when needed. So when there is no site defined using a 
+All components are installed only when needed. So when there is no site defined using a
 database, it won't be installed. As soon as a site uses a database, the specific database
 is installed and configured. This applies also to Nginx, uWSGI, the language stack, Knot etc.
 
@@ -284,7 +285,7 @@ Settings can be influenced by the following site parameters:
 
 The site user account can run the following commands:
 
-* **ustop**: Tells supervisord to stop the php-fpm process of this site. This is not 
+* **ustop**: Tells supervisord to stop the php-fpm process of this site. This is not
   persistent: A restart of supervisord will restart the php-fpm process.
 * **ustart**: Tells supervisord to start the previously stopped php-fpm process of this site.
 * **urestart**: Tells supervisord to restart the php-fpm process of this site.
@@ -302,13 +303,13 @@ To use the NodeJS stack type, the following dependencies must be fulfilled:
 
 Parameters:
 
-* **nodejs_version**: NodeJS version for this vhost, format "v4.2.1", "stable" or 
-  "latest" (the latter two update NodeJS automatically and are thus not recommended for production). 
-  Default is "stable". 
-* **nodejs_packages**: Array of Node packages to be installed on this vhost. Either [package] 
+* **nodejs_version**: NodeJS version for this vhost, format "v4.2.1", "stable" or
+  "latest" (the latter two update NodeJS automatically and are thus not recommended for production).
+  Default is "stable".
+* **nodejs_packages**: Array of Node packages to be installed on this vhost. Either [package]
   or [package]@[version]. The packages will be installed into the `[vhost]/node_modules`
   directory.
-* **nodejs_port**: Port number for nginx to connect to. The NodeJS application must listen 
+* **nodejs_port**: Port number for nginx to connect to. The NodeJS application must listen
   on this port on 127.0.0.1. Required, unless **nodejs_disable_vhost** is true.
 * **nodejs_disable_vhost**: Run NodeJS without nginx vhost. This is useful for NodeJS
   applications that only have a back-end function and are not directly accessed by clients.
@@ -318,7 +319,7 @@ Parameters:
 
 The site user account can run the following commands:
 
-* **ustop**: Tells supervisord to stop the NodeJS process of this site. This is not 
+* **ustop**: Tells supervisord to stop the NodeJS process of this site. This is not
   persistent: A restart of supervisord will restart the NodeJS process.
 * **ustart**: Tells supervisord to start the previously stopped NodeJS process of this site.
 * **urestart**: Tells supervisord to restart the NodeJS process of this site.
@@ -451,6 +452,10 @@ uhosting::sites:
 
 The module is only tested under Ubuntu 14.04 and will probably not run with other distributions.
 
+## Known Issues
+
+due to a dependency issues a initial 2nd puppet run or manual reload of nginx is needed for SSL to work
+
 ## Development
 
 1. Fork it (https://github.com/vshn/uhosting/fork)
@@ -465,4 +470,3 @@ The module is only tested under Ubuntu 14.04 and will probably not run with othe
 * Site removal (needs testing)
 * PHP extension handling
 * Redis
-
