@@ -22,6 +22,6 @@ class uhosting::profiles::supervisord {
     install_init          => false,
     config_include        => '/etc/supervisor/conf.d',
     config_include_purge  => true,
-    config_file           => '/etc/supervisor/supervisor.conf',
+    config_file           => '/etc/supervisor/supervisord.conf',
   }
 }
