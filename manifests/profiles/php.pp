@@ -26,7 +26,7 @@ class uhosting::profiles::php (
     '5.4' => 'ondrej/php5-oldstable',
     '5.5' => 'ondrej/php5',
     '5.6' => 'ondrej/php5-5.6',
-    '7.0' => 'ondrej/php-7.0',
+    '7.0' => 'ondrej/php',
   }
 
   if $php_version == '7.0' {
