@@ -57,6 +57,7 @@ define uhosting::app::owncloud (
   $vassals_dir,
   $vhost_defaults,
   $webroot,
+  $repo_url = 'https://download.owncloud.org/download/repositories/8.2/xUbuntu_',
 ) {
 
   #############################################################################
@@ -195,7 +196,7 @@ define uhosting::app::owncloud (
     Exec['apt_update'] -> Package['owncloud-server']
     ::apt::source { 'owncloud':
       comment  => 'Official repository for ownCloud',
-      location => "http://download.owncloud.org/download/repositories/stable/Ubuntu_${::lsbdistrelease}/",
+      location => "${repo_url}${::lsbdistrelease}/",      
       release  => ' ',
       repos    => '/',
       key      => {
