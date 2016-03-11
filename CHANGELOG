@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v1.0.7
+
+* php7 repo url change
+* fix owncloud repo url
+
 ## v0.1.0
 
 * Initial release
