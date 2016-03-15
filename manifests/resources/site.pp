@@ -37,6 +37,25 @@ define uhosting::resources::site (
     $ensure = 'present'
   }
 
+  ## htpasswd Auth
+
+  if $sitedata['basic_auth'] {
+    validate_bool($sitedata['basic_auth'])
+    ensure_packages('apache2-utils')
+    if $sitedata['basic_auth_file'] {
+      validate_absolute_path($sitedata['basic_auth_file'])
+      $_htpassd_file = $sitedata['basic_auth_file']
+    } else {
+      $_htpassd_file = "${homedir}/.htpasswd"
+    }
+    $_vhost_basic_auth_append = {
+      vhost_cfg_append => {
+        auth_basic => "\"${name} is restricted\"",
+        auth_basic_user_file => $_htpassd_file,
+      }
+    }
+  }
+
   ## Generate server_names for Nginx vhost
 
   if $sitedata['server_names'] {
@@ -170,7 +189,7 @@ define uhosting::resources::site (
 
   ## Define default vhost parameters
 
-  $vhost_global_defaults = {
+  $vhost_global_defaults1 = {
     ensure               => $ensure,
     ipv6_enable          => true,
     ipv6_listen_options  => '',
@@ -189,6 +208,9 @@ define uhosting::resources::site (
     #ssl_stapling_verify => true,
     add_header           => $hsts,
   }
+  # merge with basic auth append
+  $vhost_global_defaults = merge($vhost_global_defaults1,$_vhost_basic_auth_append)
+
 
   #############################################################################
   ### Create site user account
@@ -497,8 +519,8 @@ define uhosting::resources::site (
           validate_integer($sitedata['nodejs_port'], 65535, 1024)
           nginx::resource::location { '/':
             proxy => "http://127.0.0.1:${sitedata['nodejs_port']}",
-            proxy_set_header => [ 'Host $host', 
-                                  'X-Real-IP $remote_addr', 
+            proxy_set_header => [ 'Host $host',
+                                  'X-Real-IP $remote_addr',
                                   'X-Forwarded-For $proxy_add_x_forwarded_for',
                                   'X-Forwarded-Proto $scheme',
                                   'X-SSL $https' ],
