@@ -481,8 +481,6 @@ define uhosting::resources::site (
       }
       'unicorn': {
         include uhosting::profiles::nginx
-        include uhosting::profiles::supervisord
-        include uhosting::profiles::unicorn
         $unicorn_socket = "${socket_path}/unicorn-${name}.sock"
 
         if $sitedata['unicorn_path'] {
