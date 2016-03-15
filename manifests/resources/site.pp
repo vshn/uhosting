@@ -485,6 +485,20 @@ define uhosting::resources::site (
         include uhosting::profiles::unicorn
         $unicorn_socket = "${socket_path}/unicorn-${name}.sock"
 
+        if $sitedata['unicorn_path'] {
+          validate_hash($sitedata['unicorn_path'])
+          $_unicorn_bin = $sitedata['unicorn_path']
+        } else {
+          fail("Must define unicorn_path for this site")
+        }
+
+        if $sitedata['ruby_env'] {
+          validate_string($sitedata['ruby_env'])
+          $_ruby_env = $sitedata['ruby_env']
+        } else {
+          $_ruby_env = 'production'
+        }
+
         nginx::resource::upstream { 'unicorn':
           members => [
             $unicorn_socket
@@ -501,67 +515,44 @@ define uhosting::resources::site (
           vhost => $name,
         }
 
-        # PHP-FPM pool
-        $default_php_flags = {
-          'display_errors'         => 'off',
-          'display_startup_errors' => 'off',
+        # configure unicorn
+        require ruby
+        require ruby::dev
+
+        file { "${homedir}/unicorn.conf":
+          ensure  => present,
+          content => template('uhosting/unicorn.conf.erb'),
+          mode    => '0644',
+          notify  => Supervisord::Supervisorctl["unicorn-${name}"],
         }
-        if $sitedata['php_flags'] {
-          validate_hash($sitedata['php_flags'])
-          $_php_flags = merge($default_php_flags,$sitedata['php_flags'])
-        } else {
-          $_php_flags = $default_php_flags
+
+        supervisord::program { "unicorn-${name}":
+          ensure          => $ensure,
+          command         => "${_unicorn_bin} --env ${_ruby_env} --config-file ${homedir}/unicorn.conf",
+          environment     => {
+            'RAILS_ENV' => $_ruby_env,
+            'RACK_ENV'  => $_ruby_env,
+          },
+          directory       => $homedir,
+          loglevel        => 'info',
+          user            => $name,
+          autorestart     => true,
+          autostart       => true,
+          redirect_stderr => true,
+          stderr_logfile          => "${name}-error.log",
+          stderr_logfile_backups  => '7',
+          stderr_logfile_maxbytes => '10MB',
+          stdout_logfile          => "${name}.log",
+          stdout_logfile_backups  => '7',
+          stdout_logfile_maxbytes => '10MB',
+          require         => [ File["${homedir}/unicorn.conf"] ],
         }
-        # php_values
-        $default_php_values = {
+        supervisord::supervisorctl { "restart_${name}":
+          command     => 'restart',
+          process     => "unicorn-${name}",
+          refreshonly => true,
         }
-        if $sitedata['php_values'] {
-          validate_hash($sitedata['php_values'])
-          $_php_values = merge($default_php_values,$sitedata['php_values'])
-        } else {
-          $_php_values = $default_php_values
-        }
-        # php_admin_values
-        if $sitedata['php_admin_values'] {
-          validate_hash($sitedata['php_admin_values'])
-          $_php_admin_values = $sitedata['php_admin_values']
-        } else {
-          $_php_admin_values = {}
-        }
-        # php_admin_flags
-        if $sitedata['php_admin_flags'] {
-          validate_hash($sitedata['php_admin_flags'])
-          $_php_admin_flags = $sitedata['php_admin_flags']
-        } else {
-          $_php_admin_flags = {}
-        }
-        $fpm_pm                   = 'dynamic'
-        $fpm_listen_backlog       = '-1'
-        $fpm_max_children         = 50
-        $fpm_start_servers        = 5
-        $fpm_min_spare_servers    = 5
-        $fpm_max_spare_servers    = 35
-        $fpm_max_requests         = 0 # no respawning
-        $fpm_process_idle_timeout = undef
-        uhosting::resources::phpfpm_pool { $name:
-          ensure                   => $ensure,
-          fpm_pm                   => $fpm_pm,
-          fpm_socket               => $fpm_socket,
-          fpm_listen_backlog       => $fpm_listen_backlog,
-          fpm_max_children         => $fpm_max_children,
-          fpm_start_servers        => $fpm_start_servers,
-          fpm_min_spare_servers    => $fpm_min_spare_servers,
-          fpm_max_spare_servers    => $fpm_max_spare_servers,
-          fpm_max_requests         => $fpm_max_requests,
-          fpm_process_idle_timeout => $fpm_process_idle_timeout,
-          php_admin_values         => $_php_admin_values,
-          php_admin_flags          => $_php_admin_flags,
-          php_flags                => $_php_flags,
-          php_values               => $_php_values,
-          php_version              => $::uhosting::profiles::php::php_version,
-          env_variables            => $_env_vars,
-          require                  => Class['::php'],
-        }
+
       }
       'nodejs': {
         include uhosting::profiles::nginx
