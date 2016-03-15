@@ -485,15 +485,6 @@ define uhosting::resources::site (
         include uhosting::profiles::unicorn
         $unicorn_socket = "${socket_path}/unicorn-${name}.sock"
 
-        $vhost_defaults = {
-          location_raw_append  => [
-            'include uwsgi_params;',
-            'uwsgi_modifier1 7;',
-            'if (!-f $request_filename) {',
-            "  uwsgi_pass unix:${socket_path}/${name}.socket;",
-            '}',
-          ],
-        }
         nginx::resource::upstream { 'unicorn':
           members => [
             $unicorn_socket
