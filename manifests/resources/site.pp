@@ -480,15 +480,9 @@ define uhosting::resources::site (
         }
       }
       'unicorn': {
+        ensure_packages('python-pip')   # ugly code, fix
         include uhosting::profiles::nginx
         $unicorn_socket = "${socket_path}/unicorn-${name}.sock"
-
-        if $sitedata['unicorn_path'] {
-          validate_hash($sitedata['unicorn_path'])
-          $_unicorn_bin = $sitedata['unicorn_path']
-        } else {
-          fail("Must define unicorn_path for this site")
-        }
 
         if $sitedata['ruby_env'] {
           validate_string($sitedata['ruby_env'])
@@ -496,47 +490,59 @@ define uhosting::resources::site (
         } else {
           $_ruby_env = 'production'
         }
-
-        nginx::resource::upstream { 'unicorn':
-          members => [
-            $unicorn_socket
+        if $sitedata['ruby_version'] {
+          validate_string($sitedata['ruby_version'])
+          $_ruby_version = $sitedata['ruby_version']
+        } else {
+          fail('ruby_version must be defined for this site')
+        }
+        if $sitedata['app_dir'] {
+          validate_string($sitedata['app_dir'])
+          $_app_dir = $sitedata['app_dir']
+        } else {
+          $_app_dir = 'myapplication'
+          file { "${homedir}/${_app_dir}":
+            ensure => directory,
+            group  => $name,
+            owner  => $name,
+            mode   => '0750',
+          }
+        }
+        $vhost_defaults = {
+          location_raw_append  => [
+            "proxy_pass http://unix:${unicorn_socket};",
+            'proxy_redirect off;',
+            'proxy_connect_timeout 90;',
+            'proxy_read_timeout 300;',
           ],
         }
-        nginx::resource::location { '/':
-          location_custom_cfg => {
-            proxy_pass            => 'http://unicorn',
-            proxy_redirect        => 'off',
-            proxy_connect_timeout => '90',
-            proxy_read_timeout    => '300',
-          },
-          ssl   => $ssl,
-          vhost => $name,
-        }
 
-        # configure unicorn
-        require ruby
-        require ruby::dev
+        ## Variables needed throughout this profile
+        $workers = 4
+        $pidfile = "${homedir}/unicorn-${name}.pid"
 
         file { "${homedir}/unicorn.conf":
           ensure  => present,
           content => template('uhosting/unicorn.conf.erb'),
           mode    => '0644',
-          notify  => Supervisord::Supervisorctl["unicorn-${name}"],
+          notify  => Supervisord::Supervisorctl["restart_${name}"],
         }
 
         supervisord::program { "unicorn-${name}":
           ensure          => $ensure,
-          command         => "${_unicorn_bin} --env ${_ruby_env} --config-file ${homedir}/unicorn.conf",
+          command         => "${homedir}/${_app_dir}/bin/bundle exec unicorn -c ${homedir}/unicorn.conf",
           environment     => {
             'RAILS_ENV' => $_ruby_env,
             'RACK_ENV'  => $_ruby_env,
+            'PATH' => "${homedir}/${_app_dir}/bin:/usr/local/rvm/gems/${_ruby_version}/bin:/usr/local/rvm/gems/${_ruby_version}@global/bin:/usr/local/rvm/rubies/${_ruby_version}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/rvm/bin",
+            'GEM_PATH' => "/usr/local/rvm/gems/${_ruby_version}:/usr/local/rvm/gems/${_ruby_version}@global",
           },
-          directory       => $homedir,
-          loglevel        => 'info',
-          user            => $name,
-          autorestart     => true,
-          autostart       => true,
-          redirect_stderr => true,
+          directory               => "$homedir/${_app_dir}",
+          loglevel                => 'info',
+          user                    => $name,
+          autorestart             => true,
+          autostart               => true,
+          redirect_stderr         => true,
           stderr_logfile          => "unicorn-${name}-error.log",
           stderr_logfile_backups  => '7',
           stderr_logfile_maxbytes => '10MB',
