@@ -58,13 +58,6 @@ define uhosting::resources::postgresql (
     $table   = "${db_name}.*"
 
     # Create DB
-    mysql_database { $db_name:
-      ensure   => $ensure,
-      charset  => 'utf8',
-      collate  => 'utf8_general_ci',
-      provider => 'mysql',
-    }
-
     postgresql::server::db { $db_name:
       user     => $db_user,
       password => postgresql_password($db_user, $db_password),
