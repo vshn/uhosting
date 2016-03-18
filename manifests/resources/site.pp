@@ -501,10 +501,18 @@ define uhosting::resources::site (
 
           # we use maestrodev/rvm here
           include rvm
+
+          # enable user to use rvm
           rvm::system_user { $name:
               create   => false,
               require  => User[$name]
           }
+
+          # install the ruby version via rvm, don't set system default as this breaks puppet!
+          ensure_resource('rvm_system_ruby', $_ruby_version, {
+            'ensure' => present,
+            'default_use' => false 
+          })
         }
 
         if $sitedata['app_dir'] {
