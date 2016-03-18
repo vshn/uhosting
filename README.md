@@ -109,8 +109,9 @@ Choose between `stack_type` and `app`, both cannot be used!
 * ! **_key** (string): The key of the hash defines the identifier of the site
   and will be used to f.e. create a system user. Do not change it once it is set and Puppet has done it's job!
 * ! **server_names** (array of strings): Virtual domain names. `www.` will be added automatically
-* !x **stack_type** (string): Type of the hosting stack. Possible values: `static`, `uwsgi` and `phpfpm`. If the app parameter is set, this one has no use.
+* !x **stack_type** (string): Type of the hosting stack. Possible values: `static`, `uwsgi`, `unicorn` and `phpfpm`. If the app parameter is set, this one has no use.
   If the stack type is `uwsgi`, the parameter `uwsgi_plugin` needs to be configured too
+  Unicorn should be installed via gem / Gemfile of your app. Set ruby version with rvm for the app user
 * **app** (string): Name of an app profile to use. If this parameter is set, some of the other parameters have no affect.
 * **app_settings** (hash of strings): Application specific parameters used in the app profile. See header of the corresponding manifest for a parameter description.
 * **basic_auth** (bool): if true the whole vhost will be basic auth protected
@@ -122,6 +123,9 @@ Choose between `stack_type` and `app`, both cannot be used!
 * **db_user** (string): If not set, the db user will be the same as the key
 * **ensure** (present/absent). Default is present. When set to absent all resources beloging to this site will get deleted
 * x **env_vars** (hash of strings): Additional environment variables to set
+* **ruby_env** (string): Sets unicorn / rack environment for ruby / rails
+* **ruby_version** (string): Mainly used to build up path for rails / gems
+* **rvm** (bool): Set true to install RVM and enable siteuser to use rvm (adds user to rvm group)
 * **server_names_extra** (array of strings): These server names will be added to the `server_names` and the generated ones
 * **siteuser_shell** (path): Defines the shell of the site user. Default: `/bin/bash`
 * **ssh_keys**: SSH keys to attach to the site user to allow SSH login into the site user
