@@ -13,6 +13,9 @@
 #
 class uhosting::profiles::supervisord {
 
+  # supervisor package installation needs python-pip
+  ensure_packages('python-pip')
+
   # Install SupervisorD
   class { '::supervisord':
     package_provider      => 'apt',
@@ -23,5 +26,6 @@ class uhosting::profiles::supervisord {
     config_include        => '/etc/supervisor/conf.d',
     config_include_purge  => true,
     config_file           => '/etc/supervisor/supervisord.conf',
+    require               => Package['python-pip']
   }
 }

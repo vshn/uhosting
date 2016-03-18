@@ -480,8 +480,8 @@ define uhosting::resources::site (
         }
       }
       'unicorn': {
-        ensure_packages('python-pip')   # ugly code, fix
         include uhosting::profiles::nginx
+        include uhosting::profiles::supervisord
         $unicorn_socket = "${socket_path}/unicorn-${name}.sock"
 
         if $sitedata['ruby_env'] {
@@ -496,6 +496,17 @@ define uhosting::resources::site (
         } else {
           fail('ruby_version must be defined for this site')
         }
+
+        if $sitedata['rvm'] {
+
+          # we use maestrodev/rvm here
+          include rvm
+          rvm::system_user { $name:
+              create   => false,
+              require  => User[$name]
+          }
+        }
+
         if $sitedata['app_dir'] {
           validate_string($sitedata['app_dir'])
           $_app_dir = $sitedata['app_dir']
