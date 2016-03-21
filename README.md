@@ -168,7 +168,7 @@ uhosting::certificates:
       [...]
       -----END PRIVATE KEY-----
 ```
-If you have to add a certificate chain just put the certificates after each other, make sure the actual server certificate is the last one, nginx will fail otherwise. 
+If you have to add a certificate chain just put the certificates after each other, make sure the actual server certificate is the last one, nginx will fail otherwise.
 
 ### Environment Variables
 
@@ -475,7 +475,6 @@ due to a dependency issues a initial 2nd puppet run or manual reload of nginx is
 
 ### Not yet implemented features (Help appreciated)
 
-* PostgreSQL database handling
 * Site removal (needs testing)
 * PHP extension handling
 * Redis

@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v1.1.0
+* unicorn stacktype for ruby / rails via unicorn/supervisord
+* postgresql database support 
+
 ## v1.0.7
 
 * php7 repo url change
