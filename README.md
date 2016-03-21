@@ -238,6 +238,8 @@ The following stack types are known:
 * **static**: Serves static files from the public_html folder
 * **uwsgi**: Uses uWSGI as app worker, supports many languages
 * **phpfpm**: Uses PHP-FPM to serve PHP applications (use as last resort if uWSGI with PHP doesn't work)
+* **unicorn**: Controls unicorn via supervisord, unicorn has to be installed by bundler / Gemfile manually. Set `unicorn_conf` to an absolute path for manual config
+
 
 ### Stack type `static`
 
