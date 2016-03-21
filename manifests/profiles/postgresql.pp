@@ -6,23 +6,30 @@
 #
 # === Authors
 #
-# Tobias Brunner <tobias.brunner@vshn.ch>
+# Marco Fretz <marco.fretz@vshn.ch>
 #
 # === Copyright
 #
-# Copyright 2015 Tobias Brunner, VSHN AG
+# Copyright 2016 Marco Fretz, VSHN AG
 #
-class uhosting::profiles::postgresql {
+class uhosting::profiles::postgresql (
+  $listen_addresses = '127.0.0.1'
+  ) {
+
+  validate_ip_address($listen_addresses)
 
   include ::postgresql::client
   class { '::postgresql::server':
-    #ip_mask_deny_postgres_user => '0.0.0.0/32',
-    #ip_mask_allow_all_users    => '0.0.0.0/0',
-    #listen_addresses           => '*',
-    #ipv4acls                   => ['hostssl all johndoe 192.168.0.0/24 cert'],
-    #postgres_password          => 'TPSrep0rt!',
+    listen_addresses => $listen_addresses,
   }
 
-  notify { "PostgreSQL support is not yet finished. Consider contributing it please": }
+  ### Resources
+  ## Get sites from hiera
+  $sitehash = hiera('uhosting::sites')
+  $sites = keys($sitehash)
 
+  ## Create the databases
+  ::uhosting::resources::postgresql { $sites:
+    data => $sitehash,
+  }
 }
