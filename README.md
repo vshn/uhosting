@@ -164,6 +164,7 @@ uhosting::certificates:
       [...]
       -----END PRIVATE KEY-----
 ```
+If you have to add a certificate chain just put the certificates after each other, make sure the actual server certificate is the last one, nginx will fail otherwise. 
 
 ### Environment Variables
 
