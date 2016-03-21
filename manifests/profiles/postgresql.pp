@@ -14,8 +14,6 @@
 #
 class uhosting::profiles::postgresql () {
 
-  validate_string($postgresql_password)
-
   include ::postgresql::client
   class { '::postgresql::server':
   }
