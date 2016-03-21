@@ -680,6 +680,9 @@ define uhosting::resources::site (
       }
       'postgresql': {
         include uhosting::profiles::postgresql
+        if $sitedata['stack_type'] {
+          ensure_packages('libpq-dev')
+        }
       }
       default: {
         fail("Database type ${$sitedata['database']} unknown!")
