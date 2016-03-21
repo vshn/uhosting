@@ -12,10 +12,15 @@
 #
 # Copyright 2016 Marco Fretz, VSHN AG
 #
-class uhosting::profiles::postgresql () {
+class uhosting::profiles::postgresql (
+  $listen_addresses = '127.0.0.1'
+  ) {
+
+  validate_ip_address($listen_addresses)
 
   include ::postgresql::client
   class { '::postgresql::server':
+    listen_addresses => $listen_addresses,
   }
 
   ### Resources
