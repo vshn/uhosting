@@ -511,7 +511,7 @@ define uhosting::resources::site (
           # install the ruby version via rvm, don't set system default as this breaks puppet!
           ensure_resource('rvm_system_ruby', $_ruby_version, {
             'ensure' => present,
-            'default_use' => false 
+            'default_use' => false
           })
         }
 
@@ -540,16 +540,30 @@ define uhosting::resources::site (
         $workers = 4
         $pidfile = "${homedir}/unicorn-${name}.pid"
 
-        file { "${homedir}/unicorn.conf":
-          ensure  => present,
-          content => template('uhosting/unicorn.conf.erb'),
-          mode    => '0644',
-          notify  => Supervisord::Supervisorctl["restart_${name}"],
+        # unicorn_conf
+        if $sitedata['unicorn_conf'] {
+          validate_absolute_path($sitedata['unicorn_conf'])
+          $_unicorn_conf = $sitedata['unicorn_conf']
+          file { $_unicorn_conf:
+            ensure  => present,
+            owner   => $name,
+            mode    => '0644',
+            notify  => Supervisord::Supervisorctl["restart_${name}"],
+          }
+        } else {
+          $_unicorn_conf = "${homedir}/unicorn.conf"
+          file { $_unicorn_conf:
+            ensure  => present,
+            owner   => $name,
+            content => template('uhosting/unicorn.conf.erb'),
+            mode    => '0644',
+            notify  => Supervisord::Supervisorctl["restart_${name}"],
+          }
         }
 
         supervisord::program { "unicorn-${name}":
           ensure          => $ensure,
-          command         => "${homedir}/${_app_dir}/bin/bundle exec unicorn -c ${homedir}/unicorn.conf",
+          command         => "${homedir}/${_app_dir}/bin/bundle exec unicorn -c ${_unicorn_conf}",
           environment     => {
             'RAILS_ENV' => $_ruby_env,
             'RACK_ENV'  => $_ruby_env,
@@ -568,7 +582,7 @@ define uhosting::resources::site (
           stdout_logfile          => "unicorn-${name}.log",
           stdout_logfile_backups  => '7',
           stdout_logfile_maxbytes => '10MB',
-          require         => [ File["${homedir}/unicorn.conf"] ],
+          require         => [ File[$_unicorn_conf] ],
         }
         supervisord::supervisorctl { "restart_${name}":
           command     => 'restart',

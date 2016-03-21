@@ -1,4 +1,6 @@
 # THIS FILE IS MANAGED BY PUPPET
+# If you want to manage this file manually set `unicorn_conf`
+# for this site to an absolute path
 
 worker_processes Integer(ENV["WEB_CONCURRENCY"] || <%= @workers %>)
 preload_app true
