@@ -80,7 +80,7 @@ define uhosting::app::cachet (
 
   $_app_vhost_params = {
     use_default_location => false,
-    www_root             => $webroot,
+    www_root => $webroot,
   }
   $vhost_params = merge($vhost_defaults,$_app_vhost_params)
   $vhost_resource = { "${name}-cachet" => $vhost_params }

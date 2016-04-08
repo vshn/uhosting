@@ -120,8 +120,8 @@ define uhosting::app::owncloud (
 
   $_app_vhost_params = {
     use_default_location => false,
-    www_root             => $_webroot,
-    rewrite_rules        => [
+    www_root => $_webroot,
+    rewrite_rules => [
       '^/caldav(.*)$ /remote.php/caldav$1 redirect',
       '^/carddav(.*)$ /remote.php/carddav$1 redirect',
       '^/webdav(.*)$ /remote.php/webdav$1 redirect',
@@ -196,7 +196,7 @@ define uhosting::app::owncloud (
     Exec['apt_update'] -> Package['owncloud-server']
     ::apt::source { 'owncloud':
       comment  => 'Official repository for ownCloud',
-      location => "${repo_url}${::lsbdistrelease}/",      
+      location => "${repo_url}${::lsbdistrelease}/",
       release  => ' ',
       repos    => '/',
       key      => {
