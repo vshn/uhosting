@@ -101,9 +101,9 @@ define uhosting::app::wordpress (
 
   $_app_vhost_params = {
     use_default_location => false,
-    www_root             => $_webroot,
-    index_files          => [ 'index.php' ],
-    try_files            => [ '$uri', '$uri/', '=404' ],
+    www_root => $_webroot,
+    index_files => [ 'index.php' ],
+    try_files => [ '$uri', '$uri/', '=404' ],
     client_max_body_size => '100m',
   }
   $vhost_params = merge($vhost_defaults,$_app_vhost_params)
