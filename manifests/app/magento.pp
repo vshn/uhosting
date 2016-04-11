@@ -103,6 +103,17 @@ define uhosting::app::magento (
     index_files => [ 'index.php' ],
     try_files => [ '$uri', '$uri/', '@handler' ],
     client_max_body_size => $_max_upload_size,
+    raw_append => [
+      'gzip on;',
+      'gzip_comp_level 9;',
+      'gzip_http_version 1.1;',
+      'gzip_proxied any;',
+      'gzip_min_length 10;',
+      'gzip_buffers 16 8k;',
+      'gzip_types text/plain text/css application/x-javascript text/xml application/xml application/xml+rss text/javascript application/xhtml+xml;',
+      'gzip_disable "MSIE [1-6].(?!.*SV1)";',
+      'gzip_vary on;'
+    ],
   }
   $vhost_params = merge($vhost_defaults,$_app_vhost_params)
   $vhost_resource = { "${name}-magento" => $vhost_params }
