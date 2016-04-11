@@ -1,8 +1,11 @@
 # CHANGELOG
 
+## v1.2.0
+* app profile for Magento: eCommerce
+
 ## v1.1.0
 * unicorn stacktype for ruby / rails via unicorn/supervisord
-* postgresql database support 
+* postgresql database support
 
 ## v1.0.7
 
