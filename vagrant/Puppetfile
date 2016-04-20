@@ -13,11 +13,13 @@ mod "puppetlabs/firewall", '1.7.0'
 mod "rodjek/logrotate", '1.1.1'
 mod "vshn/identity", '3.0.3'
 mod "ajcrowe/supervisord", '0.5.2'
+mod 'saz/sudo', '3.1.0'
 
 # Language modules
 mod "puppetlabs/ruby", '0.4.0'
 mod "stankevich/python", '1.9.5'
-mod "mayflower/php", '3.4.1'
+mod "mayflower/php",
+  :git => 'https://github.com/mayflower/puppet-php'
 mod "puppetlabs/java", '1.4.1'
 
 # Application modules
