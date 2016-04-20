@@ -13,6 +13,7 @@ mod "puppetlabs/firewall", '1.7.0'
 mod "rodjek/logrotate", '1.1.1'
 mod "vshn/identity", '3.0.3'
 mod "ajcrowe/supervisord", '0.5.2'
+mod 'saz/sudo', '3.1.0'
 
 # Language modules
 mod "puppetlabs/ruby", '0.4.0'
