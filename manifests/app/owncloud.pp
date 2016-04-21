@@ -176,7 +176,6 @@ define uhosting::app::owncloud (
   ensure_packages([ 'php-curl',
                     'php-intl',
                     'php-xmlrpc',
-                    'php-xsl',
                     'php-apcu',
                     'php-gd'])
 
