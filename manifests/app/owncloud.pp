@@ -57,7 +57,7 @@ define uhosting::app::owncloud (
   $vassals_dir,
   $vhost_defaults,
   $webroot,
-  $repo_url = 'https://download.owncloud.org/download/repositories/8.2/xUbuntu_',
+  $repo_url = 'http://download.owncloud.org/download/repositories/stable/xUbuntu_',
 ) {
 
   #############################################################################
@@ -173,12 +173,12 @@ define uhosting::app::owncloud (
 
   ## Pre-requisits
 
-  ensure_packages([ 'php5-curl',
-                    'php5-intl',
-                    'php5-xmlrpc',
-                    'php5-xsl',
-                    'php5-apcu',
-                    'php5-gd'])
+  ensure_packages([ 'php-curl',
+                    'php-intl',
+                    'php-xmlrpc',
+                    'php-xsl',
+                    'php-apcu',
+                    'php-gd'])
 
   ## If needed install application package
 
@@ -193,22 +193,22 @@ define uhosting::app::owncloud (
     } else {
       $_package_version = undef
     }
-    Exec['apt_update'] -> Package['owncloud-server']
-    ::apt::source { 'owncloud':
-      comment  => 'Official repository for ownCloud',
-      location => "${repo_url}${::lsbdistrelease}/",
-      release  => ' ',
-      repos    => '/',
-      key      => {
-        id => 'BCECA90325B072AB1245F739AB7C32C35180350A',
-        source => 'https://download.owncloud.org/download/repositories/stable/Ubuntu_14.04/Release.key',
-      },
-      include  => {
-        src => false,
-        deb => true,
-      },
+    Exec['apt_update'] -> Package['owncloud-files']
+      ::apt::source { 'owncloud':
+        comment  => 'Official repository for ownCloud',
+        location => "${repo_url}${::lsbdistrelease}/",
+        release  => ' ',
+        repos    => '/',
+        key      => {
+          id     => 'BCECA90325B072AB1245F739AB7C32C35180350A',
+          source => 'https://download.owncloud.org/download/repositories/stable/Ubuntu_14.04/Release.key',
+        },
+        include  => {
+          src    => false,
+          deb    => true,
+        },
     } ->
-    package { 'owncloud-server':
+    package { 'owncloud-files':
       ensure => $_package_version,
     } ~>
     # see https://doc.owncloud.org/server/8.0/admin_manual/installation/installation_wizard.html#strong-perms-label
