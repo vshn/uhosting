@@ -381,7 +381,7 @@ uhosting::sites:
     app: 'owncloud'
     app_settings:
       manage_package: true
-      package_version: '8.2.1-1.1'
+      package_version: '8.2.3-2.1'
     database: 'mariadb'
     db_password: 'really-secure-password'
 ```
