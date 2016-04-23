@@ -162,6 +162,13 @@ define uhosting::app::owncloud (
                     'php-apcu',
                     'php-gd'])
 
+  ## Create Data Dir
+  file { '${webroot}/data':
+    ensure => directory,
+    mode   => '0644',
+    owner  => '${name}'
+  }
+
   ## Checkout Owncloud Application to webroot
   vcsrepo { $webroot:
   ensure     => present,
