@@ -46,7 +46,6 @@ define uhosting::app::owncloud (
   $ssl,
   $vassals_dir,
   $vhost_defaults,
-  $webroot,
 ) {
 
   #############################################################################
@@ -56,9 +55,8 @@ define uhosting::app::owncloud (
   validate_hash($app_settings)
   validate_bool($ssl)
   validate_hash($vhost_defaults)
-  validate_absolute_path($webroot)
 
-  $_webroot = '/var/www/owncloud/'
+  $webroot = '/var/www/owncloud/'
 
   if $app_settings['max_upload_size'] {
     $_max_upload_size = $app_settings['max_upload_size']
@@ -75,10 +73,10 @@ define uhosting::app::owncloud (
   $plugins = 'php'
   $vassal_params = {
     'static-skip-ext' => '.php',
-    'check-static'    => $_webroot,
-    'chdir'           => $_webroot,
-    'cron'            => "-3 -1 -1 -1 -1 /usr/bin/php -f ${_webroot}cron.php 1>/dev/null",
-    'php-docroot'     => $_webroot,
+    'check-static'    => $webroot,
+    'chdir'           => $webroot,
+    'cron'            => "-3 -1 -1 -1 -1 /usr/bin/php -f ${webroot}cron.php 1>/dev/null",
+    'php-docroot'     => $webroot,
     'php-allowed-ext' => '.php',
     'php-index'       => 'index.php',
     'php-set'         => [
@@ -105,7 +103,7 @@ define uhosting::app::owncloud (
 
   $_app_vhost_params = {
     use_default_location => false,
-    www_root => $_webroot,
+    www_root => $webroot,
     rewrite_rules => [
       '^/caldav(.*)$ /remote.php/caldav$1 redirect',
       '^/carddav(.*)$ /remote.php/carddav$1 redirect',
@@ -123,7 +121,7 @@ define uhosting::app::owncloud (
     ssl           => $ssl,
     ssl_only      => $ssl,
     location      => '/',
-    www_root      => $_webroot,
+    www_root      => $webroot,
     rewrite_rules => [
       '^/.well-known/host-meta /public.php?service=host-meta last',
       '^/.well-known/host-meta.json /public.php?service=host-meta-json last',
@@ -166,7 +164,7 @@ define uhosting::app::owncloud (
 
   ## If needed install application package
 
-  vcsrepo { '$_webroot':
+  vcsrepo { '$webroot':
   ensure     => present,
   provider   => git,
   source     => 'https://github.com/owncloud/core.git',
@@ -177,12 +175,12 @@ define uhosting::app::owncloud (
   # see https://doc.owncloud.org/server/8.0/admin_manual/installation/installation_wizard.html#strong-perms-label
   exec { 'oc_set_owner':
     path        => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
-    command     => "chown -R root:www-data $_webroot; chown -R ${name}:www-data $_webroot/data $_webroot/config $_webroot/apps $_webroot/themes;",
+    command     => "chown -R root:www-data $webroot; chown -R ${name}:www-data $webroot/data $webroot/config $webroot/apps $webroot/themes;",
     refreshonly => true, # run only when package is installed or upgraded
   } ~>
   exec { 'oc_set_mode':
     path        => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
-    command     => "find $_webroot/ -type f -print0 | xargs -0 chmod 0640; find $_webroot/ -type d -print0 | xargs -0 chmod 0750",
+    command     => "find $webroot/ -type f -print0 | xargs -0 chmod 0640; find $webroot/ -type d -print0 | xargs -0 chmod 0750",
     refreshonly => true, # run only when package is installed or upgraded
   }
 }
