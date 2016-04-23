@@ -35,6 +35,7 @@
 # === Authors
 #
 # Tobias Brunner <tobias.brunner@vshn.ch>
+# Bastian Widmer <bastian@amazee.io>
 #
 # === Copyright
 #
