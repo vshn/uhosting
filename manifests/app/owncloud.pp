@@ -161,8 +161,7 @@ define uhosting::app::owncloud (
                     'php-apcu',
                     'php-gd'])
 
-  ## If needed install application package
-
+  ## Checkout Owncloud Application to webroot
   vcsrepo { '$webroot':
   ensure     => present,
   provider   => git,
