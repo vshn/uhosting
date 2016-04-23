@@ -58,11 +58,7 @@ define uhosting::app::owncloud (
   validate_hash($vhost_defaults)
   validate_absolute_path($webroot)
 
-  if $app_settings['manage_package'] {
-    $_webroot = '/var/www/owncloud/'
-  } else {
-    $_webroot = $webroot
-  }
+  $_webroot = '/var/www/owncloud/'
 
   if $app_settings['max_upload_size'] {
     $_max_upload_size = $app_settings['max_upload_size']
