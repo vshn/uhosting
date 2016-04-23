@@ -24,7 +24,6 @@
 # [*ssl*]
 # [*vassals_dir*]
 # [*vhost_defaults*]
-# [*webroot*]
 #
 # === app_settings
 #
