@@ -47,7 +47,6 @@ define uhosting::app::owncloud (
   $vassals_dir,
   $vhost_defaults,
   $webroot,
-  $version,
 ) {
 
   #############################################################################
