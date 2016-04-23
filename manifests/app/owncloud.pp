@@ -45,6 +45,7 @@ define uhosting::app::owncloud (
   $ssl,
   $vassals_dir,
   $vhost_defaults,
+  $webroot,
 ) {
 
   #############################################################################
@@ -54,8 +55,6 @@ define uhosting::app::owncloud (
   validate_hash($app_settings)
   validate_bool($ssl)
   validate_hash($vhost_defaults)
-
-  $webroot = '/var/www/owncloud'
 
   if $app_settings['max_upload_size'] {
     $_max_upload_size = $app_settings['max_upload_size']
