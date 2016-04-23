@@ -181,4 +181,13 @@ define uhosting::app::owncloud (
 
   # see https://doc.owncloud.org/server/8.0/admin_manual/installation/installation_wizard.html#strong-perms-label
   exec { 'oc_set_owner':
+    path        => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+    command     => "chown -R root:www-data $_webroot; chown -R ${name}:www-data $_webroot/data $_webroot/config $_webroot/apps $_webroot/themes;",
+    refreshonly => true, # run only when package is installed or upgraded
+  } ~>
+  exec { 'oc_set_mode':
+    path        => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+    command     => "find $_webroot/ -type f -print0 | xargs -0 chmod 0640; find $_webroot/ -type d -print0 | xargs -0 chmod 0750",
+    refreshonly => true, # run only when package is installed or upgraded
+  }
 }
