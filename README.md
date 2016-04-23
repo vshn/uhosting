@@ -380,8 +380,7 @@ uhosting::sites:
       - 'mycloud.domain.net'
     app: 'owncloud'
     app_settings:
-      manage_package: true
-      package_version: '9.0.0-3.1'
+      version: 'v9.0.1'
     database: 'mariadb'
     db_password: 'really-secure-password'
 ```

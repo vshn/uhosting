@@ -28,16 +28,6 @@
 #
 # === app_settings
 #
-# [*manage_package*]
-#   Default: false
-#   Defines if the owncloud-server package should be installed from the official
-#   ownCloud repository.
-#
-# [*package_version*]
-#   Default: empty
-#   If manage_package is true this can be used to chose which package version to install.
-#   It also pins this application version in APT.
-#
 # [*max_upload_size*]
 #   Default: 1024m
 #   For example set this to 2G to allow 2GB uploads via the web frontend.
@@ -57,7 +47,7 @@ define uhosting::app::owncloud (
   $vassals_dir,
   $vhost_defaults,
   $webroot,
-  $repo_url = 'http://download.owncloud.org/download/repositories/stable/xUbuntu_',
+  $version,
 ) {
 
   #############################################################################
@@ -181,46 +171,14 @@ define uhosting::app::owncloud (
 
   ## If needed install application package
 
-  if $app_settings['manage_package'] {
-    if $app_settings['package_version'] {
-      $_package_version = $app_settings['package_version']
-      ::apt::pin { 'hold-owncloud-server':
-        packages => 'owncloud-server',
-        version  => $app_settings['package_version'],
-        priority => 1001,
-      }
-    } else {
-      $_package_version = undef
-    }
-    Exec['apt_update'] -> Package['owncloud-files']
-      ::apt::source { 'owncloud':
-        comment  => 'Official repository for ownCloud',
-        location => "${repo_url}${::lsbdistrelease}/",
-        release  => ' ',
-        repos    => '/',
-        key      => {
-          id     => 'BCECA90325B072AB1245F739AB7C32C35180350A',
-          source => 'https://download.owncloud.org/download/repositories/stable/Ubuntu_14.04/Release.key',
-        },
-        include  => {
-          src    => false,
-          deb    => true,
-        },
-    } ->
-    package { 'owncloud-files':
-      ensure => $_package_version,
-    } ~>
-    # see https://doc.owncloud.org/server/8.0/admin_manual/installation/installation_wizard.html#strong-perms-label
-    exec { 'oc_set_owner':
-      path        => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
-      command     => "chown -R root:www-data $_webroot; chown -R ${name}:www-data $_webroot/data $_webroot/config $_webroot/apps $_webroot/themes;",
-      refreshonly => true, # run only when package is installed or upgraded
-    } ~>
-    exec { 'oc_set_mode':
-      path        => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
-      command     => "find $_webroot/ -type f -print0 | xargs -0 chmod 0640; find $_webroot/ -type d -print0 | xargs -0 chmod 0750",
-      refreshonly => true, # run only when package is installed or upgraded
-    }
+  vcsrepo { '$_webroot':
+  ensure     => present,
+  provider   => git,
+  source     => 'https://github.com/owncloud/core.git',
+  revision   => $version
+  submodules => true
   }
 
+  # see https://doc.owncloud.org/server/8.0/admin_manual/installation/installation_wizard.html#strong-perms-label
+  exec { 'oc_set_owner':
 }
