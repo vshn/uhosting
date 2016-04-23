@@ -162,7 +162,7 @@ define uhosting::app::owncloud (
                     'php-gd'])
 
   ## Checkout Owncloud Application to webroot
-  vcsrepo { '$webroot':
+  vcsrepo { $webroot:
   ensure     => present,
   provider   => git,
   source     => 'https://github.com/owncloud/core.git',
