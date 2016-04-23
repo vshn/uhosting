@@ -49,7 +49,12 @@ class uhosting::profiles::nginx (
       '/etc/nginx/redirects.conf':
         content => template('uhosting/nginx_redirects.conf.erb');
     }
+    file {
+      '/etc/nginx/01_catchall.conf':
+        content => template('uhosting/nginx_01_catchall.conf.erb');
+    }
     $http_cfg_append = {
+      'include' => '/etc/nginx/01_catchall.conf',
       'include' => '/etc/nginx/redirects.conf',
     }
   } else {
