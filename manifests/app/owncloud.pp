@@ -155,37 +155,41 @@ define uhosting::app::owncloud (
   #############################################################################
 
   ## Pre-requisits
-
   ensure_packages([ 'php-curl',
                     'php-intl',
                     'php-xmlrpc',
                     'php-apcu',
                     'php-gd'])
 
-  ## Create Data Dir
-  # file { '${webroot}/data':
-  #   ensure => directory,
-  #   mode   => '0644',
-  #   owner  => '${name}'
-  # }
-
   ## Checkout Owncloud Application to webroot
   vcsrepo { $webroot:
-  ensure     => present,
-  provider   => git,
-  source     => 'https://github.com/owncloud/core.git',
-  revision   => $version,
-  submodules => true,
-  } ->
+    ensure     => present,
+    provider   => git,
+    source     => 'https://github.com/owncloud/core.git',
+    revision   => $app_settings['version'],
+    submodules => true,
+    user       => $name,
+    require    => File[$webroot],
+    notify     => [
+      Exec['oc_set_owner'],
+      Exec['oc_set_mode'],
+    ]
+  }->
+  # Create Data Dir
+  file { "${webroot}/data/":
+    ensure => directory,
+    mode   => '0644',
+    owner  => $name,
+  }->
   # see https://doc.owncloud.org/server/8.0/admin_manual/installation/installation_wizard.html#strong-perms-label
   exec { 'oc_set_owner':
     path        => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
     command     => "chown -R root:www-data $webroot; chown -R ${name}:www-data $webroot/data $webroot/config $webroot/apps $webroot/themes;",
-    refreshonly => true, # run only when package is installed or upgraded
+    refreshonly => true,
   } ~>
   exec { 'oc_set_mode':
     path        => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
     command     => "find $webroot/ -type f -print0 | xargs -0 chmod 0640; find $webroot/ -type d -print0 | xargs -0 chmod 0750",
-    refreshonly => true, # run only when package is installed or upgraded
+    refreshonly => true,
   }
 }
