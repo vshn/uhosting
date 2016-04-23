@@ -168,7 +168,6 @@ define uhosting::app::owncloud (
     source     => 'https://github.com/owncloud/core.git',
     revision   => $app_settings['version'],
     submodules => true,
-    user       => $name,
     require    => File[$webroot],
     notify     => [
       Exec['oc_set_owner'],
