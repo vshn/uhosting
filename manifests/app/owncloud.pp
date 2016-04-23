@@ -175,7 +175,7 @@ define uhosting::app::owncloud (
   ensure     => present,
   provider   => git,
   source     => 'https://github.com/owncloud/core.git',
-  revision   => $version
+  revision   => $version,
   submodules => true
   }
 
