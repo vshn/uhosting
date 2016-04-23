@@ -169,7 +169,6 @@ define uhosting::app::owncloud (
   source     => 'https://github.com/owncloud/core.git',
   revision   => $version,
   submodules => true,
-  user       => 'www-data',
   } ->
   # see https://doc.owncloud.org/server/8.0/admin_manual/installation/installation_wizard.html#strong-perms-label
   exec { 'oc_set_owner':
