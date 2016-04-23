@@ -163,11 +163,11 @@ define uhosting::app::owncloud (
                     'php-gd'])
 
   ## Create Data Dir
-  file { '${webroot}/data':
-    ensure => directory,
-    mode   => '0644',
-    owner  => '${name}'
-  }
+  # file { '${webroot}/data':
+  #   ensure => directory,
+  #   mode   => '0644',
+  #   owner  => '${name}'
+  # }
 
   ## Checkout Owncloud Application to webroot
   vcsrepo { $webroot:
