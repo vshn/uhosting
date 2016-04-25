@@ -1,5 +1,7 @@
 <% @redirects.each do |destination,sources| %>
 server {
+  listen *:80;
+  listen [::]:80 ;
   server_name <%= sources.join(' ') %>;
   return 301 http://<%= destination %>;
 }
