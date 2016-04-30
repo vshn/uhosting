@@ -209,7 +209,7 @@ define uhosting::app::owncloud (
     submodules => true,
     user       => $name,
     require    => File[$webroot],
-    notify     => [Exec['oc_set_owner'], Exec['oc_set_mode']],
+    notify     => [Exec["oc_set_owner-${name}"], Exec["oc_set_mode-${name}"]],
   }->
   #Create Data Dir
   file { "${webroot}/data/":
@@ -218,12 +218,12 @@ define uhosting::app::owncloud (
     owner  => $name,
   }
   ->
-  exec { 'oc_set_owner':
+  exec { "oc_set_owner-${name}":
   path        => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
   command     => "chown -R ${name}:www-data $webroot/data $webroot/config $webroot/apps $webroot/themes;",
   refreshonly => true,
   }
-  exec { 'oc_set_mode':
+  exec { "oc_set_mode-${name}":
   path        => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
   command     => "find $webroot/ -type f -print0 | xargs -0 chmod 0640; find $webroot/ -type d -print0 | xargs -0 chmod 0750",
   refreshonly => true,
