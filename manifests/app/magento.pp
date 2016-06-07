@@ -49,6 +49,10 @@ define uhosting::app::magento (
   validate_hash($vhost_defaults)
   validate_absolute_path($webroot)
 
+  if $app_settings['maindomain'] {
+    validate_string($app_settings['maindomain'])
+    $_maindomain = $app_settings['maindomain']
+  }
   if $app_settings['max_upload_size'] {
     $_max_upload_size = $app_settings['max_upload_size']
   } else {
@@ -115,7 +119,16 @@ define uhosting::app::magento (
       'gzip_vary on;'
     ],
   }
-  $vhost_params = merge($vhost_defaults,$_app_vhost_params)
+  if ($_maindomain != undef) and ($ssl) {
+    $_main_domain_ssl_redirect = {
+      rewrite_to_https => false,
+      raw_prepend => [
+        inline_template('if ($ssl_protocol = "") { return 301 https://<%= @_maindomain %>$request_uri; }'),
+      ],
+    }
+  }
+
+  $vhost_params = merge($vhost_defaults,$_app_vhost_params,$_main_domain_ssl_redirect)
   $vhost_resource = { "${name}-magento" => $vhost_params }
   create_resources('::nginx::resource::vhost',$vhost_resource)
 
@@ -163,12 +176,12 @@ define uhosting::app::magento (
     www_root      => $webroot,
   }
   ::nginx::resource::location { "${name}-dotfiles":
-    vhost         => "${name}-magento",
-    ssl           => $ssl,
-    ssl_only      => $ssl,
-    location      => '/.',
-    raw_prepend   => 'return 403;',
-    www_root      => $webroot,
+    vhost       => "${name}-magento",
+    ssl         => $ssl,
+    ssl_only    => $ssl,
+    location    => '~ /\.',
+    raw_prepend => 'return 403;',
+    www_root    => $webroot,
   }
   ::nginx::resource::location { "${name}-var_folder":
     vhost         => "${name}-magento",
@@ -210,14 +223,14 @@ define uhosting::app::magento (
   }
 
   ::nginx::resource::location { "${name}-php_handler":
-    vhost              => "${name}-magento",
-    ssl                => $ssl,
-    ssl_only           => $ssl,
-    location           => '~ .php$',
-    priority           => 550,
-    fastcgi            => "unix:${fpm_socket}",
-    fastcgi_param      => { 'SCRIPT_FILENAME' => '$document_root$fastcgi_script_name' },
-    raw_prepend        => [ 'expires off;', 'if (!-e $request_filename) { rewrite / /index.php last; }' ]
+    vhost         => "${name}-magento",
+    ssl           => $ssl,
+    ssl_only      => $ssl,
+    location      => '~ .php$',
+    priority      => 550,
+    fastcgi       => "unix:${fpm_socket}",
+    fastcgi_param => { 'SCRIPT_FILENAME' => '$document_root$fastcgi_script_name' },
+    raw_prepend   => [ 'expires off;', 'if (!-e $request_filename) { rewrite / /index.php last; }' ]
   }
 
 
