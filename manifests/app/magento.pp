@@ -22,7 +22,9 @@
 #
 # === app_settings
 #
-# None
+# [*maindomain*]
+#   Default: undef
+#   Set to the maindomain of your SSL certs cname, to redirect http to this https domain only
 #
 # === Authors
 #
