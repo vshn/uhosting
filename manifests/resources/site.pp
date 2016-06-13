@@ -383,7 +383,7 @@ define uhosting::resources::site (
         include uhosting::profiles::nginx
         include uhosting::profiles::supervisord
         include uhosting::profiles::php
-        $fpm_socket = "${socket_path}/php5-fpm-${name}.sock"
+        $fpm_socket = "${socket_path}/php${uhosting::profiles::php::php_version}-fpm-${name}.sock"
         $vhost_defaults = {
           index_files => [ 'index.php' ],
           try_files   => [ '$uri', '$uri/', '=404' ],

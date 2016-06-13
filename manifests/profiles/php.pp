@@ -22,27 +22,25 @@ class uhosting::profiles::php (
     }
   }
 
-  $_version_repo = $php_version ? {
-    '5.4' => 'ondrej/php5-oldstable',
-    '5.5' => 'ondrej/php5',
-    '5.6' => 'ondrej/php5-5.6',
-    '7.0' => 'ondrej/php',
-  }
+  #package { 'php5-common':
+  #  ensure  => 'absent',
+  #}
+  #package { 'php5-json':
+  #  ensure  => 'absent',
+  #}
+
+  $_version_repo = 'ondrej/php'
+  $package_prefix = "php${php_version}-"
+  $cfg_root = "/etc/php/${php_version}"
+  $config_root_ini = "/etc/php/${php_version}"
+  $fpm_service_name = "php${php_version}-fpm"
 
   if $php_version == '7.0' {
-    $config_root_ini = '/etc/php/7.0'
     $ext_tool_enable = '/usr/sbin/phpenmod'
     $ext_tool_query = '/usr/sbin/phpquery'
-    $package_prefix = 'php7.0-'
-    $fpm_service_name = 'php7.0-fpm'
-    $cfg_root = '/etc/php/7.0'
   } else {
-    $config_root_ini = undef
     $ext_tool_enable = undef
     $ext_tool_query = undef
-    $package_prefix = undef
-    $fpm_service_name = undef
-    $cfg_root = undef
   }
 
   apt::source { 'sury_php_ppa':
