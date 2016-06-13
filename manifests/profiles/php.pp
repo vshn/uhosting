@@ -22,13 +22,6 @@ class uhosting::profiles::php (
     }
   }
 
-  #package { 'php5-common':
-  #  ensure  => 'absent',
-  #}
-  #package { 'php5-json':
-  #  ensure  => 'absent',
-  #}
-
   $_version_repo = 'ondrej/php'
   $package_prefix = "php${php_version}-"
   $cfg_root = "/etc/php/${php_version}"
