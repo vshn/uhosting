@@ -156,7 +156,7 @@ define uhosting::resources::site (
   # TODO: really needed?
   if $sitedata['system_packages'] {
     validate_array($sitedata['system_packages'])
-    ensure_packages($sitedata['system_packages'])
+    # The actual installation happens near the end of the manifest
   }
 
   ## Handle SSL certificate settings
@@ -383,7 +383,16 @@ define uhosting::resources::site (
         include uhosting::profiles::nginx
         include uhosting::profiles::supervisord
         include uhosting::profiles::php
-        $fpm_socket = "${socket_path}/php${uhosting::profiles::php::php_version}-fpm-${name}.sock"
+        $fpm_socket = "${socket_path}/php-fpm-${name}.sock"
+        # symlinks for compatibility with older configurations with hard-coded socket paths
+        file { "${socket_path}/php5-fpm-${name}.sock":
+          ensure  => 'link',
+          target  => $fpm_socket,
+        }
+        file { "${socket_path}/php7.0-fpm-${name}.sock":
+          ensure  => 'link',
+          target  => $fpm_socket,
+        }
         $vhost_defaults = {
           index_files => [ 'index.php' ],
           try_files   => [ '$uri', '$uri/', '=404' ],
@@ -667,6 +676,18 @@ define uhosting::resources::site (
     # Create Nginx vhost
     $vhost_resource = { "${name}" => $vhost_params }
     create_resources('::nginx::resource::vhost',$vhost_resource)
+  }
+
+  # system packages
+  if $sitedata['system_packages'] {
+    # Compatibility: Fix old package names to match desired php version number
+    # This is also the reason why we have to do this down here - we can't access the php version number before profiles::php is included
+    if $uhosting::profiles::php::php_version {
+      $_system_packages = regsubst($sitedata['system_packages'], '^php5-(.*)$', "php${uhosting::profiles::php::php_version}-\\1")
+    } else {
+      $_system_packages = $sitedata['system_packages']
+    }
+    ensure_packages($_system_packages)
   }
 
   #############################################################################
