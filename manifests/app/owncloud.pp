@@ -173,12 +173,12 @@ define uhosting::app::owncloud (
 
   ## Pre-requisits
 
-  ensure_packages([ 'php5-curl',
-                    'php5-intl',
-                    'php5-xmlrpc',
-                    'php5-xsl',
-                    'php5-apcu',
-                    'php5-gd'])
+  ensure_packages([ 'php5.5-curl',
+                    'php5.5-intl',
+                    'php5.5-xmlrpc',
+                    'php5.5-xsl',
+                    'php5.5-apcu',
+                    'php5.5-gd'])
 
   ## If needed install application package
 

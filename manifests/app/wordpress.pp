@@ -58,7 +58,7 @@ define uhosting::app::wordpress (
 
   include uhosting::profiles::php
   include uhosting::profiles::supervisord
-  $fpm_socket = "/var/lib/uhosting/php5-fpm-${name}.sock"
+  $fpm_socket = "/var/lib/uhosting/php-fpm-${name}.sock"
 
   # PHP-FPM pool
   $_php_values = {
@@ -159,9 +159,9 @@ define uhosting::app::wordpress (
 
   ## Pre-requisits
 
-  #ensure_packages([ 'php5-curl',
-  #                  'php5-apcu',
-  #                  'php5-gd'])
+  #ensure_packages([ 'php5.5-curl',
+  #                  'php5.5-apcu',
+  #                  'php5.5-gd'])
 
 
 }

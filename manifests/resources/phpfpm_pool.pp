@@ -38,24 +38,8 @@ define uhosting::resources::phpfpm_pool (
   if $php_values { validate_hash($php_values) }
   if $env_variables { validate_hash($env_variables) }
 
-  case $php_version {
-    '5.4': {
-      $_fpm_binary = '/usr/sbin/php5-fpm'
-      $_master_config_file = "/etc/php5/fpm/${name}.conf"
-    }
-    '5.5': {
-      $_fpm_binary = '/usr/sbin/php5-fpm'
-      $_master_config_file = "/etc/php5/fpm/${name}.conf"
-    }
-    '5.6': {
-      $_fpm_binary = '/usr/sbin/php5-fpm'
-      $_master_config_file = "/etc/php5/fpm/${name}.conf"
-    }
-    '7.0': {
-      $_fpm_binary = '/usr/sbin/php-fpm7.0'
-      $_master_config_file = "/etc/php/7.0/fpm/${name}.conf"
-    }
-  }
+  $_fpm_binary = "/usr/sbin/php-fpm${php_version}"
+  $_master_config_file = "/etc/php/${php_version}/fpm/${name}.conf"
 
   $ensure_process = $ensure ? {
     'present' => 'running',

@@ -60,7 +60,7 @@ define uhosting::app::cachet (
     'static-skip-ext' => '.php',
     'check-static'    => $webroot,
     'chdir'           => $webroot,
-    'cron2'           => "minute=-10,unique=1 /usr/bin/php5 ${webroot}/artisan schedule:run 1>/dev/null",
+    'cron2'           => "minute=-10,unique=1 /usr/bin/php5.5 ${webroot}/artisan schedule:run 1>/dev/null",
     'php-docroot'     => '',
     'php-allowed-ext' => '.php',
     'php-index'       => 'index.php',
@@ -111,7 +111,7 @@ define uhosting::app::cachet (
 
   ## Pre-requisits
 
-  #ensure_packages([ 'php5-curl',
-  #                  'php5-gd'])
+  #ensure_packages([ 'php5.5-curl',
+  #                  'php5.5-gd'])
 
 }
