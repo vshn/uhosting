@@ -61,7 +61,7 @@ define uhosting::resources::site (
   if $sitedata['server_names'] {
     validate_array($sitedata['server_names'])
     if $::vagrant {
-      $suffix = [ ".${::fqdn}", ".vagrant.dev" ]
+      $suffix = [ ".${::fqdn}", '.vagrant.dev' ]
     } else {
       $suffix = [ ".${::fqdn}" ]
     }
@@ -372,7 +372,7 @@ define uhosting::resources::site (
             }
           }
           default: {
-            fail("UWSGI PLUGIN UNKNOWN")
+            fail('UWSGI PLUGIN UNKNOWN')
           }
         }
         sudo::conf { "uwsgi_manage_${name}":
@@ -533,7 +533,7 @@ define uhosting::resources::site (
             ensure => directory,
             group  => $name,
             owner  => $name,
-            mode   => '0750',
+            mode   => '0755',
           }
         }
         $vhost_defaults = {
@@ -579,7 +579,7 @@ define uhosting::resources::site (
             'PATH' => "${homedir}/${_app_dir}/bin:/usr/local/rvm/gems/${_ruby_version}/bin:/usr/local/rvm/gems/${_ruby_version}@global/bin:/usr/local/rvm/rubies/${_ruby_version}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/rvm/bin",
             'GEM_PATH' => "/usr/local/rvm/gems/${_ruby_version}:/usr/local/rvm/gems/${_ruby_version}@global",
           },
-          directory               => "$homedir/${_app_dir}",
+          directory               => "${homedir}/${_app_dir}",
           loglevel                => 'info',
           user                    => $name,
           autorestart             => true,
@@ -651,7 +651,7 @@ define uhosting::resources::site (
         }
       }
       default: {
-        fail("STACKTYPE UNKNOWN")
+        fail('STACKTYPE UNKNOWN')
       }
     }
 
