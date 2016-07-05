@@ -37,6 +37,12 @@ define uhosting::resources::site (
     $ensure = 'present'
   }
 
+  if $sitedata['letsencrypt'] == false {
+    $_letsencrypt = false
+  } else {
+    $_letsencrypt = true
+  }
+
   ## htpasswd Auth
 
   if $sitedata['basic_auth'] {
@@ -159,6 +165,14 @@ define uhosting::resources::site (
     # The actual installation happens near the end of the manifest
   }
 
+  # maindomain for correct https redirect
+  if $sitedata['maindomain'] {
+    validate_string($sitedata['maindomain'])
+    $_redirect_host = $sitedata['maindomain']
+  } else {
+    $_redirect_host = '$host'
+  }
+
   ## Handle SSL certificate settings
 
   if $sitedata['ssl_cert'] {
@@ -173,7 +187,24 @@ define uhosting::resources::site (
     if $sitedata['ssl_rewrite_to_https'] == false {
       $rewrite_to_https = false
     } else {
-      $rewrite_to_https = true
+
+      include uhosting::profiles::nginx
+
+      if $_letsencrypt {
+        ::nginx::resource::vhost { "${name}-redirect":
+          use_default_location => false,
+          raw_append           => inline_template('if ($request_uri !~ "^/.well-known/acme-challenge/.*") { return 301 https://<%= @_redirect_host %>$request_uri; }'),
+          raw_prepend          => 'location /.well-known/acme-challenge/ { alias /var/run/acme/acme-challenge/; }',
+          server_name          => $server_names,
+        }
+
+      } else {
+        ::nginx::resource::vhost { "${name}-redirect":
+          use_default_location => false,
+          rewrite_to_https     => true,
+          server_name          => $server_names,
+        }
+      }
     }
     $ssl = true
     $hsts = { 'Strict-Transport-Security' => '"max-age=31536000"' }
@@ -188,6 +219,24 @@ define uhosting::resources::site (
   }
 
   ## Define default vhost parameters
+  if $ssl {
+    $vhost_global_ssl_settings = {
+      listen_port          => 443, # jfryman hack to disable http vhost
+      ssl_port             => 443, # jfryman hack to disable http vhost
+      ssl                  => true,
+      ssl_cert             => $ssl_cert,
+      ssl_key              => $ssl_key,
+      ssl_dhparam          => $ssl_dhparam,
+      rewrite_to_https     => false,
+      ssl_protocols        => 'TLSv1 TLSv1.1 TLSv1.2',
+      ssl_ciphers          => 'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:AES:CAMELLIA:DES-CBC3-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA',
+      add_header           => $hsts,
+    }
+  } else {
+    $vhost_global_ssl_settings = {
+      ssl                  => false,
+    }
+  }
 
   $vhost_global_defaults1 = {
     ensure               => $ensure,
@@ -197,20 +246,10 @@ define uhosting::resources::site (
     server_name          => $server_names,
     index_files          => ['index.html'],
     use_default_location => true,
-    ssl                  => $ssl,
-    ssl_cert             => $ssl_cert,
-    ssl_key              => $ssl_key,
-    ssl_dhparam          => $ssl_dhparam,
-    rewrite_to_https     => $rewrite_to_https,
-    ssl_protocols        => 'TLSv1 TLSv1.1 TLSv1.2',
-    ssl_ciphers          => 'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:AES:CAMELLIA:DES-CBC3-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA',
-    #ssl_stapling        => true, TODO needs more work: http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_stapling_verify
-    #ssl_stapling_verify => true,
-    add_header           => $hsts,
-  }
-  # merge with basic auth append
-  $vhost_global_defaults = merge($vhost_global_defaults1,$_vhost_basic_auth_append)
+    }
 
+  # merge with basic auth append
+  $vhost_global_defaults = merge($vhost_global_ssl_settings,$vhost_global_defaults1,$_vhost_basic_auth_append)
 
   #############################################################################
   ### Create site user account
