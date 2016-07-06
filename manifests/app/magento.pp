@@ -22,10 +22,6 @@
 #
 # === app_settings
 #
-# [*maindomain*]
-#   Default: undef
-#   Set to the maindomain of your SSL certs cname, to redirect http to this https domain only
-#
 # === Authors
 #
 # Marco Fretz <marco.fretz@vshn.ch>
@@ -51,10 +47,7 @@ define uhosting::app::magento (
   validate_hash($vhost_defaults)
   validate_absolute_path($webroot)
 
-  if $app_settings['maindomain'] {
-    validate_string($app_settings['maindomain'])
-    $_maindomain = $app_settings['maindomain']
-  }
+
   if $app_settings['max_upload_size'] {
     $_max_upload_size = $app_settings['max_upload_size']
   } else {
@@ -121,16 +114,8 @@ define uhosting::app::magento (
       'gzip_vary on;'
     ],
   }
-  if ($_maindomain != undef) and ($ssl) {
-    $_main_domain_ssl_redirect = {
-      rewrite_to_https => false,
-      raw_prepend => [
-        inline_template('if ($ssl_protocol = "") { return 301 https://<%= @_maindomain %>$request_uri; }'),
-      ],
-    }
-  }
 
-  $vhost_params = merge($vhost_defaults,$_app_vhost_params,$_main_domain_ssl_redirect)
+  $vhost_params = merge($vhost_defaults,$_app_vhost_params)
   $vhost_resource = { "${name}-magento" => $vhost_params }
   create_resources('::nginx::resource::vhost',$vhost_resource)
 
