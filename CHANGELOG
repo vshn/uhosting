@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v1.4.0
+* separate vhosts for http and http
+* redirect only in http vhost if ssl on
+* letsencrypt prepared, see README
+
 ## v1.2.0
 * app profile for Magento: eCommerce
 
