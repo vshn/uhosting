@@ -112,6 +112,7 @@ Choose between `stack_type` and `app`, both cannot be used!
 * !x **stack_type** (string): Type of the hosting stack. Possible values: `static`, `uwsgi`, `unicorn` and `phpfpm`. If the app parameter is set, this one has no use.
   If the stack type is `uwsgi`, the parameter `uwsgi_plugin` needs to be configured too
   Unicorn should be installed via gem / Gemfile of your app. Set ruby version with rvm for the app user
+* **maindomain** (fqdn): set this to the FQDN of your certificate name if you have multiple server_names but cert is for one name only.
 * **app** (string): Name of an app profile to use. If this parameter is set, some of the other parameters have no affect.
 * **app_settings** (hash of strings): Application specific parameters used in the app profile. See header of the corresponding manifest for a parameter description.
 * **basic_auth** (bool): if true the whole vhost will be basic auth protected
@@ -169,6 +170,9 @@ uhosting::certificates:
       -----END PRIVATE KEY-----
 ```
 If you have to add a certificate chain just put the certificates after each other, make sure the actual server certificate is the last one, nginx will fail otherwise.
+
+#### Let's Encrypt
+uhosting is now prepared for Let's Encrypt. This means that the /.well-known/acme-challenge/ location is added in the non-ssl http vhost (if ssl is turned on). You have to use acmetool or something similar that puts certificates in /var/run/acme/acme-challenge/. 
 
 ### Environment Variables
 
