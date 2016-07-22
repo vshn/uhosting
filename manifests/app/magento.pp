@@ -237,7 +237,6 @@ define uhosting::app::magento (
                     'php-apcu',
                     "php${uhosting::profiles::php::php_version}-xml",
                     "php${uhosting::profiles::php::php_version}-bcmath",
-                    "",
                     "php${uhosting::profiles::php::php_version}-gd"], {
                       require => Exec['apt_update'],
                       })
