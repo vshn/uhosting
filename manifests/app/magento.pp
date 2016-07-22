@@ -230,12 +230,14 @@ define uhosting::app::magento (
 
   ## Pre-requisits
 
-  ensure_packages([ 'php5.5-mysql',
+  ensure_packages([ "php${uhosting::profiles::php::php_version}-mysql",
                     'php-crypt-gpg',
-                    'php5.5-curl',
-                    'php5.5-mcrypt',
-                    'php5.5-apcu',
-                    'php5.5-gd'])
+                    "php${uhosting::profiles::php::php_version}-curl",
+                    "php${uhosting::profiles::php::php_version}-mcrypt",
+                    'php-apcu',
+                    "php${uhosting::profiles::php::php_version}-gd"], {
+                      require => Exec['apt_update'],
+                      })
 
 
 }
