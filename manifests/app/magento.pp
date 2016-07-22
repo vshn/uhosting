@@ -216,7 +216,10 @@ define uhosting::app::magento (
     location      => '~ .php$',
     priority      => 550,
     fastcgi       => "unix:${fpm_socket}",
-    fastcgi_param => { 'SCRIPT_FILENAME' => '$document_root$fastcgi_script_name' },
+    fastcgi_param => {
+      'SCRIPT_FILENAME' => '$document_root$fastcgi_script_name',
+      'HTTP_PROXY'      => '""', # httpoxy Mitigation
+    },
     raw_prepend   => [ 'expires off;', 'if (!-e $request_filename) { rewrite / /index.php last; }' ]
   }
 
