@@ -190,21 +190,24 @@ define uhosting::resources::site (
 
       include uhosting::profiles::nginx
 
-      if $_letsencrypt {
-        ::nginx::resource::vhost { "${name}-redirect":
-          use_default_location => false,
-          raw_append           => inline_template('if ($request_uri !~ "^/.well-known/acme-challenge/.*") { return 301 https://<%= @_redirect_host %>$request_uri; }'),
-          raw_prepend          => 'location /.well-known/acme-challenge/ { alias /var/run/acme/acme-challenge/; }',
-          server_name          => $server_names,
-        }
+      $_redirect_vhost_default = {
+        ipv6_enable => true,
+        ipv6_listen_options => '',
+        use_default_location => false,
+        server_name => $server_names,
+        rewrite_to_https     => true,
+      }
 
-      } else {
-        ::nginx::resource::vhost { "${name}-redirect":
-          use_default_location => false,
-          rewrite_to_https     => true,
-          server_name          => $server_names,
+      if $_letsencrypt {
+        $_letsencrypt_vhostconfig = {
+          raw_append => inline_template('if ($request_uri !~ "^/.well-known/acme-challenge/.*") { return 301 https://<%= @_redirect_host %>$request_uri; }'),
+          raw_prepend => 'location /.well-known/acme-challenge/ { alias /var/run/acme/acme-challenge/; }',
+          rewrite_to_https => false,
         }
       }
+
+      $_redirect_vhost = { "${name}-redirect" => merge($_redirect_vhost_default,$_letsencrypt_vhostconfig) }
+      create_resources('::nginx::resource::vhost',$_redirect_vhost)
     }
     $ssl = true
     $hsts = { 'Strict-Transport-Security' => '"max-age=31536000"' }
