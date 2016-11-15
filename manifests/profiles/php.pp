@@ -22,10 +22,8 @@ class uhosting::profiles::php (
     }
   }
 
-  $_version_repo = 'ondrej/php'
   $package_prefix = "php${php_version}-"
   $cfg_root = "/etc/php/${php_version}"
-  $config_root_ini = "/etc/php/${php_version}"
   $fpm_service_name = "php${php_version}-fpm"
 
   if $php_version == '7.0' {
@@ -38,7 +36,7 @@ class uhosting::profiles::php (
 
   apt::source { 'sury_php_ppa':
     comment  => 'PHP PPA of Ondrej Sury',
-    location => "http://ppa.launchpad.net/${_version_repo}/ubuntu",
+    location => 'http://ppa.launchpad.net/ondrej/php/ubuntu',
     release  => $::lsbdistcodename,
     repos    => 'main',
     key      => {
@@ -49,29 +47,24 @@ class uhosting::profiles::php (
       'src' => true,
       'deb' => true,
     },
+  } ~> Exec['apt_update'] ->
+
+  class { '::php::globals':
+    php_version => $php_version,
+    config_root => $cfg_root,
   } ->
-  class { '::php::params':
-    cfg_root => $cfg_root,
-  } ->
+
   class { '::php':
-    manage_repos    => false,
-    fpm             => true,
-    dev             => true,
-    composer        => true,
-    pear            => true,
-    phpunit         => false,
-    config_root_ini => $config_root_ini,
-    ext_tool_enable => $ext_tool_enable,
-    ext_tool_query  => $ext_tool_query,
-    package_prefix  => $package_prefix,
-    extensions      => {
-      #'imagick'     => { 'provider' => 'apt' },
-      #'gmp'         => { 'provider' => 'apt' },
-      #'mcrypt'      => { 'provider' => 'apt' },
-      #'json'        => { 'provider' => 'apt' },
-      #'mysqlnd'     => { 'provider' => 'apt' },
-    },
-    require         => Exec['apt_update'],
+    manage_repos       => false,
+    fpm                => true,
+    dev                => true,
+    composer           => true,
+    pear               => true,
+    phpunit            => false,
+    ext_tool_enable    => $ext_tool_enable,
+    ext_tool_query     => $ext_tool_query,
+    package_prefix     => $package_prefix,
+    fpm_service_enable => false, # fixes reload on every run on trusty
   }
   Service <| tag == 'php5-fpm' |> {
     name   => $fpm_service_name,
