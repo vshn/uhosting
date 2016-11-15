@@ -67,7 +67,7 @@ The module depends on a lot of third party modules. Have a look at `vagrant/Pupp
 out which ones. Here is a list of the most important ones:
 
 * [nginx](https://forge.puppetlabs.com/jfryman/nginx)
-* [php](https://forge.puppetlabs.com/mayflower/php)
+* [php](https://github.com/vshn/puppet-php.git), tested tag vshn-1.1.0
 * [mysql](https://forge.puppetlabs.com/puppetlabs/mysql)
 * [staging](https://forge.puppetlabs.com/nanliu/staging)
 
