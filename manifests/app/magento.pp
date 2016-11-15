@@ -230,17 +230,19 @@ define uhosting::app::magento (
 
   ## Pre-requisits
 
-  # ensure_packages([ "php${uhosting::profiles::php::php_version}-mysql",
-  #                   'php-crypt-gpg',
-  #                   "php${uhosting::profiles::php::php_version}-curl",
-  #                   "php${uhosting::profiles::php::php_version}-mcrypt",
-  #                   'php-apcu',
-  #                   "php${uhosting::profiles::php::php_version}-xml",
-  #                   "php${uhosting::profiles::php::php_version}-mbstring",
-  #                   "php${uhosting::profiles::php::php_version}-bcmath",
-  #                   "php${uhosting::profiles::php::php_version}-gd"], {
-  #                     require => Class['::php::globals'],
-  #                     })
-
-
+  ensure_packages(
+    [
+      "php${uhosting::profiles::php::php_version}-mysql",
+      'php-crypt-gpg',
+      "php${uhosting::profiles::php::php_version}-curl",
+      "php${uhosting::profiles::php::php_version}-mcrypt",
+      'php-apcu',
+      "php${uhosting::profiles::php::php_version}-xml",
+      "php${uhosting::profiles::php::php_version}-mbstring",
+      "php${uhosting::profiles::php::php_version}-bcmath",
+      "php${uhosting::profiles::php::php_version}-gd"
+    ],
+    {
+      require => Package["php${uhosting::profiles::php::php_version}-fpm"],
+    })
 }
