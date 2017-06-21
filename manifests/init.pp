@@ -17,6 +17,10 @@
 # [*certificates*]
 #   Hash of certificate data. See README for details.
 #
+# [*basic_auth_bypass_ips*]
+#   array of CIDR networks or IPs which bypass basic_auth
+#   for all vhosts. mostly used for monitoring. default []
+#
 # === Authors
 #
 # Tobias Brunner <tobias.brunner@vshn.ch>
@@ -31,10 +35,12 @@ class uhosting (
   $dns_zones = undef,
   $certificates = undef,
   $sshlogin_group = 'sshlogin',
+  $basic_auth_bypass_ips = [],
 ) {
 
   ## Validate mandatory parameters
 
+  validate_array($basic_auth_bypass_ips)
   validate_hash($sites)
 
   ## Manage DNS if there are DNS zone defined
