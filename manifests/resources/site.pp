@@ -23,6 +23,7 @@ define uhosting::resources::site (
   ### Prepare vars for later usage
   #############################################################################
 
+  $basic_auth_bypass_ips = $::uhosting::basic_auth_bypass_ips
   $sitedata    = $data[$name]
   $homedir     = "/var/www/${name}"
   $vassals_dir = '/etc/uwsgi-emperor/vassals'
@@ -54,11 +55,14 @@ define uhosting::resources::site (
     } else {
       $_htpassd_file = "${homedir}/.htpasswd"
     }
+    $_allows = sort(suffix(prefix($basic_auth_bypass_ips, 'allow '), ';'))
     $_vhost_basic_auth_append = {
-      vhost_cfg_append => {
-        auth_basic => "\"${name} is restricted\"",
-        auth_basic_user_file => $_htpassd_file,
-      }
+      raw_append => union($_allows, [
+        "auth_basic \"${name} is restricted\";",
+        "auth_basic_user_file ${_htpassd_file};",
+        'deny all;',
+        'satisfy any;',
+      ])
     }
   }
 
@@ -428,12 +432,12 @@ define uhosting::resources::site (
         $fpm_socket = "${socket_path}/php-fpm-${name}.sock"
         # symlinks for compatibility with older configurations with hard-coded socket paths
         file { "${socket_path}/php5-fpm-${name}.sock":
-          ensure  => 'link',
-          target  => $fpm_socket,
+          ensure => 'link',
+          target => $fpm_socket,
         }
         file { "${socket_path}/php7.0-fpm-${name}.sock":
-          ensure  => 'link',
-          target  => $fpm_socket,
+          ensure => 'link',
+          target => $fpm_socket,
         }
         $vhost_defaults = {
           index_files => [ 'index.php' ],
@@ -556,8 +560,8 @@ define uhosting::resources::site (
 
           # enable user to use rvm
           rvm::system_user { $name:
-              create   => false,
-              require  => User[$name]
+              create  => false,
+              require => User[$name]
           }
 
           # install the ruby version via rvm, don't set system default as this breaks puppet!
@@ -597,10 +601,10 @@ define uhosting::resources::site (
           validate_absolute_path($sitedata['unicorn_conf'])
           $_unicorn_conf = $sitedata['unicorn_conf']
           file { $_unicorn_conf:
-            ensure  => present,
-            owner   => $name,
-            mode    => '0644',
-            notify  => Supervisord::Supervisorctl["restart_${name}"],
+            ensure => present,
+            owner  => $name,
+            mode   => '0644',
+            notify => Supervisord::Supervisorctl["restart_${name}"],
           }
         } else {
           $_unicorn_conf = "${homedir}/unicorn.conf"
@@ -614,13 +618,13 @@ define uhosting::resources::site (
         }
 
         supervisord::program { "unicorn-${name}":
-          ensure          => $ensure,
-          command         => "${homedir}/${_app_dir}/bin/bundle exec unicorn -c ${_unicorn_conf}",
-          environment     => {
+          ensure                  => $ensure,
+          command                 => "${homedir}/${_app_dir}/bin/bundle exec unicorn -c ${_unicorn_conf}",
+          environment             => {
             'RAILS_ENV' => $_ruby_env,
             'RACK_ENV'  => $_ruby_env,
-            'PATH' => "${homedir}/${_app_dir}/bin:/usr/local/rvm/gems/${_ruby_version}/bin:/usr/local/rvm/gems/${_ruby_version}@global/bin:/usr/local/rvm/rubies/${_ruby_version}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/rvm/bin",
-            'GEM_PATH' => "/usr/local/rvm/gems/${_ruby_version}:/usr/local/rvm/gems/${_ruby_version}@global",
+            'PATH'      => "${homedir}/${_app_dir}/bin:/usr/local/rvm/gems/${_ruby_version}/bin:/usr/local/rvm/gems/${_ruby_version}@global/bin:/usr/local/rvm/rubies/${_ruby_version}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/rvm/bin",
+            'GEM_PATH'  => "/usr/local/rvm/gems/${_ruby_version}:/usr/local/rvm/gems/${_ruby_version}@global",
           },
           directory               => "${homedir}/${_app_dir}",
           loglevel                => 'info',
@@ -634,7 +638,7 @@ define uhosting::resources::site (
           stdout_logfile          => "unicorn-${name}.log",
           stdout_logfile_backups  => '7',
           stdout_logfile_maxbytes => '10MB',
-          require         => [ File[$_unicorn_conf] ],
+          require                 => [ File[$_unicorn_conf] ],
         }
         supervisord::supervisorctl { "restart_${name}":
           command     => 'restart',
@@ -682,14 +686,14 @@ define uhosting::resources::site (
           }
           validate_integer($sitedata['nodejs_port'], 65535, 1024)
           nginx::resource::location { '/':
-            proxy => "http://127.0.0.1:${sitedata['nodejs_port']}",
+            proxy            => "http://127.0.0.1:${sitedata['nodejs_port']}",
             proxy_set_header => [ 'Host $host',
                                   'X-Real-IP $remote_addr',
                                   'X-Forwarded-For $proxy_add_x_forwarded_for',
                                   'X-Forwarded-Proto $scheme',
                                   'X-SSL $https' ],
-            ssl   => $ssl,
-            vhost => $name,
+            ssl              => $ssl,
+            vhost            => $name,
           }
         }
       }
@@ -749,7 +753,7 @@ define uhosting::resources::site (
         }
       }
       default: {
-        fail("Database type ${$sitedata['database']} unknown!")
+        fail("Database type ${sitedata['database']} unknown!")
       }
     }
   }
