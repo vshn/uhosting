@@ -68,7 +68,6 @@ class uhosting::profiles::nginx (
 
   class { '::nginx':
     package_name      => 'nginx-extras',
-    configtest_enable => true,
   }
 
   ## Generate unique DH params for this server
